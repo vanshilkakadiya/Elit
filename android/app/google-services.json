@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "82866293682",
+    "project_id": "elit-118c0",
+    "storage_bucket": "elit-118c0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:82866293682:android:4dfb2468611e66d3d172ab",
+        "android_client_info": {
+          "package_name": "com.elit"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCHfJBKvVLhIGyOBA_Eey3U6xDLB43u0eM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

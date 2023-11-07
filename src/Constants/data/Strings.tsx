@@ -1,7 +1,28 @@
-const strings=({
-    ELIT_Login:'ELIT Login',
-    Email_Address:'Email Address',
-    Password:'Password',
-    NEXT:'N E X T'
-})
+const strings = {
+  ELIT_Login: 'ELIT Login',
+  Email_Address: 'Email Address',
+  Password: 'Password',
+  NEXT: 'N E X T',
+  validPasswordLength: 'Password must require atleast 7',
+  Logout: 'Logout',
+  DashBoard: 'DashBoard',
+  click: 'click',
+  GraphQLScreen: 'GraphQl Screen',
+  sigbatureScreen: 'signature Screen',
+  FirebaseDemo: 'FirebaseDemo',
+  Notification: 'Notification',
+  Mutation: 'Mutation',
+  Apicalling: 'Api calling',
+  CANCLE:'CANCLE',
+  AddCustomer:'Add Customer',
+  CustomerName:'Customer Name',
+  PhoneNo:'Phone No',
+  PANNo:'PAN No',
+  CustomerGSTDetail:'Customer GST Detail',
+  GSTNo:'GST No.',
+  GSTState:'GST State',
+  GSTStateCode:'GST State Code',
+  BillingAddress:'Billing Address',
+  SUBMIT:'SUBMIT',
+};
 export default strings;
