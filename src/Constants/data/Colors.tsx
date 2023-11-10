@@ -7,7 +7,8 @@ const colors = {
   purpule: '#8179F9',
   pink: '#F45083',
   linkText: '#3383FF',
-  infoSuggestText:'#8096A4'
+  infoSuggestText: '#8096A4',
+  borderColor: '#a9a9a9',
 };
 
 export default colors;

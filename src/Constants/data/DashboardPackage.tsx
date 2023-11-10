@@ -5,4 +5,4 @@ const DATA: any = [
   {numOfData: 0, nameOfPackage: 'Chat'},
 ];
 
-export default DATA;
+export {DATA};

@@ -3,7 +3,6 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  Image,
   SafeAreaView,
 } from 'react-native';
 import React, {useState} from 'react';
@@ -13,6 +12,7 @@ import strings from '../../Constants/data/Strings';
 import colors from '../../Constants/data/Colors';
 import {TextInput} from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
+import EventButton from '../../Components/EventButton';
 
 const Auth = ({navigation}: any) => {
   const [showPassword, setShowPassword] = useState(true);
@@ -25,7 +25,7 @@ const Auth = ({navigation}: any) => {
     let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
 
     if (val.length === 0) {
-      setEmailValidError('email address must be conte');
+      setEmailValidError('email address must be require');
     } else if (reg.test(val) === false) {
       setEmailValidError('enter valid email');
     } else if (reg.test(val) === true) {
@@ -61,7 +61,7 @@ const Auth = ({navigation}: any) => {
   };
 
   return (
-    <View style={styles.mainView}>
+    <SafeAreaView style={styles.mainView}>
       <View style={styles.appLogoView}>
         <indexs.SVGComponent />
         <Text style={styles.ELIT_LoginTxt}>{strings.ELIT_Login}</Text>
@@ -119,7 +119,7 @@ const Auth = ({navigation}: any) => {
           <Text style={styles.nextText}>{strings.NEXT}</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -131,6 +131,7 @@ const styles = StyleSheet.create({
     fontSize: fontSize(50),
     fontWeight: '500',
     marginLeft: wp(25),
+    marginTop: hp(50),
   },
   mainConatinerStyle: {
     flex: 1,
@@ -147,7 +148,7 @@ const styles = StyleSheet.create({
   },
   warningMessage: {
     color: colors.red,
-    marginLeft: wp(25),
+    marginLeft: wp(40),
     fontSize: fontSize(20),
   },
   eyeIcon: {
@@ -163,11 +164,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'flex-end',
-    marginBottom: hp(50),
+    marginBottom: hp(10),
   },
   nextText: {
     color: colors.white,
-    fontSize: fontSize(25),
+    fontSize: fontSize(20),
   },
   inputStyle: {
     height: hp(55),

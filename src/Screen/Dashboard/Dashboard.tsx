@@ -12,8 +12,7 @@ import auth from '@react-native-firebase/auth';
 import {fontSize, hp, wp} from '../../Constants/helper/helper';
 import colors from '../../Constants/data/Colors';
 import DashBoardLinks from '../../Components/DashBoardLinks';
-import DATA from '../../Constants/data/DashboardPackage';
-import AddCustomer from '../Customer/AddCustomer';
+import allData from '../../Constants/data';
 
 const Dashboard = ({navigation}: any) => {
   const logout = () => {
@@ -34,22 +33,39 @@ const Dashboard = ({navigation}: any) => {
       </TouchableOpacity>
       <Text style={styles.DashBoardText}>{strings.DashBoard}</Text>
       <FlatList
-        data={DATA}
+        data={allData.DATA}
         numColumns={2}
         renderItem={({item, index}: {item: any; index: number}) => {
           console.log('index', index);
           return (
             <View style={styles.flatListMainView}>
-              <View style={[styles.boxView, styles.shadowOffset,{backgroundColor: index % 4 === 0 ? colors.cyan:index%4===1?colors.orange:index%4===2?colors.purpule:colors.pink}]}>
+              <TouchableOpacity
+                style={[
+                  styles.boxView,
+                  styles.shadowOffset,
+                  {
+                    backgroundColor:
+                      index % 4 === 0
+                        ? colors.cyan
+                        : index % 4 === 1
+                        ? colors.orange
+                        : index % 4 === 2
+                        ? colors.purpule
+                        : colors.pink,
+                  },
+                ]}
+                onPress={() => {
+                  navigation.navigate(item?.nameOfPackage);
+                }}>
                 <Text style={styles.numberDataText}>{item.numOfData}</Text>
                 <Text style={styles.packageNameText}>{item.nameOfPackage}</Text>
-              </View>
+              </TouchableOpacity>
             </View>
           );
         }}
       />
       <View style={styles.linkView}>
-        <DashBoardLinks linkName={strings.click} navigationScreenName={AddCustomer} />
+        <DashBoardLinks linkName={strings.click} />
         <DashBoardLinks linkName={strings.GraphQLScreen} />
         <DashBoardLinks linkName={strings.sigbatureScreen} />
         <DashBoardLinks linkName={strings.FirebaseDemo} />
@@ -92,8 +108,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   boxView: {
-    height: hp(125),
-    width: wp(175),
+    height: hp(110),
+    width: wp(195),
     borderRadius: 10,
     justifyContent: 'center',
     backgroundColor: 'green',
@@ -116,9 +132,9 @@ const styles = StyleSheet.create({
     color: colors.white,
     fontWeight: '500',
   },
-  linkView:{
-    marginBottom:hp(25)
-  }
+  linkView: {
+    marginBottom: hp(25),
+  },
 });
 
 export default Dashboard;

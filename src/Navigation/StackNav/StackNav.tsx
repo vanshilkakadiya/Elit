@@ -4,6 +4,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Dashboard from '../../Screen/Dashboard/Dashboard';
 import Auth from '../../Screen/Auth/Auth';
 import AddCustomer from '../../Screen/Customer/AddCustomer';
+import Customers from '../../Screen/Customer/Customers';
 
 const Stack = createNativeStackNavigator();
 
@@ -16,6 +17,7 @@ function StackNav() {
         <Stack.Screen name="Auth" component={Auth} />
         <Stack.Screen name="Dashboard" component={Dashboard} />
         <Stack.Screen name="AddCustomer" component={AddCustomer} />
+        <Stack.Screen name="Customers" component={Customers} />
       </Stack.Navigator>
     </NavigationContainer>
   );
