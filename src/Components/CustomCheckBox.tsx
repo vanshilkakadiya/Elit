@@ -35,4 +35,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CustomCheckBox;
+export default React.memo(CustomCheckBox);

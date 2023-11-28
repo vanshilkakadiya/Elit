@@ -1,8 +1,7 @@
-import {DashboardDataPackge, customersList} from './ConstantData';
+import {DashboardDataPackge} from './ConstantData';
 
 const allData = {
   DATA: DashboardDataPackge,
-  CustomerList: customersList,
 };
 
 export default allData;

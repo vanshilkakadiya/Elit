@@ -87,6 +87,7 @@ const styles = StyleSheet.create({
     fontSize: fontSize(30),
     fontWeight: '500',
     marginRight: wp(15),
+    color: colors.black,
   },
   DashBoardText: {
     fontSize: fontSize(40),
@@ -94,6 +95,7 @@ const styles = StyleSheet.create({
     marginLeft: wp(15),
     marginTop: hp(75),
     marginBottom: hp(50),
+    color: colors.black,
   },
   item: {
     backgroundColor: '#f9c2ff',
@@ -109,7 +111,7 @@ const styles = StyleSheet.create({
   },
   boxView: {
     height: hp(110),
-    width: wp(195),
+    width: wp(175),
     borderRadius: 10,
     justifyContent: 'center',
     backgroundColor: 'green',

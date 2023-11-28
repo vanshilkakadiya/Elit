@@ -32,5 +32,9 @@ const strings = {
   State: 'State',
   Shipping_address_is_same_as_billing_address:
     'Shipping address is same as billing address',
+  GSTDetails:'GST Details',
+  Shipping_Address:'Shipping Address',
+  DELETE:'DELETE',
+  EDIT:'EDIT'
 };
 export default strings;

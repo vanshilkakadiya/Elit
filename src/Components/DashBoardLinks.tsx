@@ -8,7 +8,7 @@ const DashBoardLinks = ({linkName, navigationScreenName}: any) => {
   const {navigate}: any = useNavigation();
   return (
     <View>
-      <TouchableOpacity onPress={() => navigate(navigationScreenName)}>
+      <TouchableOpacity>
         <Text style={styles.linkText}>{linkName}</Text>
       </TouchableOpacity>
     </View>

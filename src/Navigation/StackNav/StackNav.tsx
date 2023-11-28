@@ -5,6 +5,7 @@ import Dashboard from '../../Screen/Dashboard/Dashboard';
 import Auth from '../../Screen/Auth/Auth';
 import AddCustomer from '../../Screen/Customer/AddCustomer';
 import Customers from '../../Screen/Customer/Customers';
+import DetailCustomer from '../../Screen/Customer/DetailCustomer';
 
 const Stack = createNativeStackNavigator();
 
@@ -18,6 +19,8 @@ function StackNav() {
         <Stack.Screen name="Dashboard" component={Dashboard} />
         <Stack.Screen name="AddCustomer" component={AddCustomer} />
         <Stack.Screen name="Customers" component={Customers} />
+        <Stack.Screen name="DetailCustomer" component={DetailCustomer} />
+        
       </Stack.Navigator>
     </NavigationContainer>
   );

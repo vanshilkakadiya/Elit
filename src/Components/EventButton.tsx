@@ -9,14 +9,25 @@ const EventButton = ({
   fontSize,
   navScreenName,
   bottomSize,
+  onPressEvent,
+  disabled,
+  isLogo,
+  logoPath,
+  logoStyle
 }: any) => {
   const {navigate}: any = useNavigation();
+
   return (
     <View style={styles.viewBottom}>
       <TouchableOpacity
         style={[styles.topacView, {bottom: bottomSize}]}
-        onPress={() => navigate(navScreenName)}>
-        <Text style={[styles.btnName, {fontSize: fontSize}]}>{buttonName}</Text>
+        onPress={onPressEvent}
+        disabled={disabled}
+        >
+          {
+            isLogo?<Image source={logoPath} style={logoStyle}  />:
+            <Text style={[styles.btnName, {fontSize: fontSize}]}>{buttonName}</Text>
+          }
       </TouchableOpacity>
     </View>
   );

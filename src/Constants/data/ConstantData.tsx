@@ -5,16 +5,4 @@ const DashboardDataPackge: any = [
   {numOfData: 0, nameOfPackage: 'Chat'},
 ];
 
-const customersList: any = [
-  {customerName: 'fjghjghjgk', mobileNo: 222222222222},
-  {customerName: 'fjghjghjgk', mobileNo: 222222222222},
-  {customerName: 'fjghjghjgk', mobileNo: 222222222222},
-  {customerName: 'fjghjghjgk', mobileNo: 222222222222},
-  {customerName: 'fjghjghjgk', mobileNo: 222222222222},
-  {customerName: 'fjghjghjgk', mobileNo: 222222222222},
-  {customerName: 'fjghjghjgk', mobileNo: 222222222222},
-  {customerName: 'fjghjghjgk', mobileNo: 222222222222},
-  {customerName: 'fjghjghjgk', mobileNo: 222222222222},
-];
-
-export {DashboardDataPackge, customersList};
+export {DashboardDataPackge};

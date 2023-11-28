@@ -132,6 +132,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     marginLeft: wp(25),
     marginTop: hp(50),
+    color:colors.black
   },
   mainConatinerStyle: {
     flex: 1,
