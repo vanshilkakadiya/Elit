@@ -5,104 +5,92 @@ import {
   StyleSheet,
   SafeAreaView,
   FlatList,
+  Image,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {  useState} from 'react';
 import strings from '../../Constants/data/Strings';
 import colors from '../../Constants/data/Colors';
 import {fontSize, hp, wp} from '../../Constants/helper/helper';
-import EventButton from '../../Components/EventButton';
-import {firebase} from '@react-native-firebase/firestore';
+import Back from '../../Components/Back';
+import {useDispatch, useSelector} from 'react-redux';
 
-const Customers = ({navigation}: any) => {
+const Customers = ({navigation}: any) => {  
   const generateColor = () => {
-    const randomColor = Math.floor(Math.random() * 12545457)
-      .toString(16)
-      .padStart(6, '0');
+    const randomColor = Math.floor(Math.random() * 12548431)
+    .toString(16)
+    .padStart(6, '0');
     return `#${randomColor}`;
   };
+  
+  const customerAllData = useSelector((state:any) => state.customer.customerData);
 
-  const [allCustomer, setAllCustomer]: any = useState([]);
-
-  useEffect(() => {
-    firebase
-      .firestore()
-      .collection('AllCustomers')
-      .onSnapshot(documentSnapshot => {
-        let tempData: any = [];
-        documentSnapshot.forEach(documentSnapshot => {
-          const data = documentSnapshot.data();
-          data.id = documentSnapshot.id;
-          tempData.push(data);
-        });
-        setAllCustomer(tempData);
-      });
-  }, []);
+  const customerRenderItem = ({item}: any) => {
+    return (
+      <View style={styles.flatListView}>
+        <TouchableOpacity
+          style={styles.dataTopac}
+          onPress={() =>
+            navigation.navigate('DetailCustomer', {
+              otherParam: item.id,
+            })
+          }>
+          <View
+            style={[styles.firstLetter, {backgroundColor: generateColor()}]}>
+            <Text style={styles.firstLetterText}>
+              {item?.data?.Name?.charAt(0).toUpperCase()}
+            </Text>
+          </View>
+          <View style={{justifyContent: 'space-evenly'}}>
+            <Text style={styles.customerNameText}>{item.data?.Name}</Text>
+            <Text style={styles.customerContactNoText}>
+              {item.data?.PhoneNo}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+    );
+  };
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
-      <TouchableOpacity onPress={() => navigation.navigate('Dashboard')}>
-        <Text style={styles.backText}>{strings.Back}</Text>
-      </TouchableOpacity>
+      <Back backwardString={strings.Back} />
       <Text style={styles.customersText}>{strings.Customers}</Text>
       <FlatList
-        data={allCustomer}
+        data={customerAllData}
         showsVerticalScrollIndicator={false}
-        renderItem={({item}: {item: any}) => {
-          return (
-            <View style={styles.flatListView}>
-              <TouchableOpacity
-                style={styles.dataTopac}
-                onPress={() =>
-                  navigation.navigate('DetailCustomer', {
-                    otherParam: item,
-                  })
-                }>
-                <View
-                  style={[
-                    styles.firstLetter,
-                    {backgroundColor: generateColor()},
-                  ]}>
-                  <Text style={styles.firstLetterText}>
-                    {item?.Name?.charAt(0).toUpperCase()}
-                  </Text>
-                </View>
-                <View style={{justifyContent: 'space-evenly'}}>
-                  <Text style={styles.customerNameText}>{item?.Name}</Text>
-                  <Text style={styles.customerContactNoText}>
-                    {item?.PhoneNo}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-          );
-        }}
+        // @ts-ignore
+        renderItem={customerRenderItem}
       />
-
-      <EventButton
-        // buttonName={strings.plusLogo}
-        isLogo={true}
-        logoPath={require('../../../assets/Images/plusLogo.png')}
-        logoStyle={styles.plusLogo}
-        fontSize={70}
-        onPressEvent={() => {
-          navigation.navigate('AddCustomer', {});
-        }}
-        bottomSize={20}
-      />
+      <View style={[styles.topacView, {bottom: 30}]}>
+        <TouchableOpacity
+          style={styles.topac}
+          onPress={() => {
+            navigation.navigate('AddCustomer', {});
+          }}>
+          <Image
+            source={require('../../../assets/Images/plusLogo.png')}
+            style={styles.plusLogo}
+          />
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  mainView: {
-    flex: 1,
-    backgroundColor: colors.white,
+  topacView: {
+    position: 'absolute',
+    alignSelf: 'flex-end',
+    zIndex: 1,
   },
-  backText: {
-    fontSize: fontSize(30),
-    marginLeft: wp(25),
-    fontWeight: '500',
-    color: colors.black,
+  topac: {
+    height: hp(100),
+    width: hp(100),
+    borderRadius: 100,
+    backgroundColor: colors.black,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: wp(15),
   },
   customersText: {
     fontSize: fontSize(50),
@@ -135,42 +123,25 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: colors.black,
   },
-  flatListView: {flex: 1, marginTop: hp(15), position: 'relative'},
+  flatListView: {
+    flex: 1,
+    position: 'relative',
+  },
   customerNameText: {
     fontWeight: '600',
     fontSize: fontSize(25),
     color: colors.black,
     width: wp(260),
   },
-  plusLogo:{
-    height:hp(50),
-    width:wp(50),
-    tintColor:colors.white,
-    alignSelf:'center',
-    resizeMode:'contain'
+  plusLogo: {
+    height: hp(50),
+    width: wp(50),
+    tintColor: colors.white,
+    resizeMode: 'contain',
   },
   customerContactNoText: {
     fontSize: fontSize(20),
     color: colors.black,
-  },
-  mainConatinerStyle: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  nextBtn: {
-    height: hp(90),
-    width: wp(90),
-    backgroundColor: colors.black,
-    borderRadius: hp(150),
-    marginRight: wp(25),
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'flex-end',
-    marginBottom: hp(50),
-  },
-  nextText: {
-    color: colors.white,
-    fontSize: fontSize(100),
   },
 });
 

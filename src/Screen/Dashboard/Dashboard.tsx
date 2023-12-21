@@ -5,74 +5,145 @@ import {
   StyleSheet,
   SafeAreaView,
   FlatList,
+  Alert,
 } from 'react-native';
-import React from 'react';
 import strings from '../../Constants/data/Strings';
 import auth from '@react-native-firebase/auth';
-import {fontSize, hp, wp} from '../../Constants/helper/helper';
+import {fontSize, hp, isIos, wp} from '../../Constants/helper/helper';
 import colors from '../../Constants/data/Colors';
-import DashBoardLinks from '../../Components/DashBoardLinks';
 import allData from '../../Constants/data';
+import React, {useEffect, useState} from 'react';
+import {firebase} from '@react-native-firebase/firestore';
+import {useDispatch} from 'react-redux';
+import {addCustomerList} from '../../Redux/action/action';
+import {addProductList} from '../../Redux/action/productAction';
+import {DATA} from '../../Constants/data/DashboardPackage';
 
 const Dashboard = ({navigation}: any) => {
+  const dispatch = useDispatch();
+  const [productLength, setProductLength]:any = useState();
+  const [customerLength, setCustomerLength]:any = useState();
+  const user: any = firebase.auth().currentUser;
+  const data1 = DATA;
+
+  useEffect(() => {
+    customer_data();
+    product_data();
+  }, []);
+
+  const product_data = () => {
+    firebase
+      .firestore()
+      .collection('AllData')
+      .doc(user?.uid)
+      .collection('Products')
+      .onSnapshot(documentSnapshot => {
+        const temp = documentSnapshot?.docs?.map(item => {
+          return {data: item?.data(), id: item?.id};
+        });
+        setProductLength(temp?.length);
+        dispatch(addProductList(temp));
+      });
+  };
+
+  const customer_data = () => {
+    firebase
+      .firestore()
+      .collection('AllData')
+      .doc(user?.uid)
+      .collection('Customers')
+      .onSnapshot(documentSnapshot => {
+        const temp = documentSnapshot?.docs?.map(item => {
+          return {data: item?.data(), id: item?.id};
+        });
+        setCustomerLength(temp?.length);
+        dispatch(addCustomerList(temp));
+      });
+  };
+
   const logout = () => {
     auth()
       .signOut()
       .then(() => {
-        console.log('User signed out!'), navigation.navigate('Auth');
+        navigation.replace('Auth');
       });
+  };
+
+  const logoutAlert = () => {
+    Alert.alert('Hold on!', 'Are you sure you want to Logout?', [
+      {
+        text: 'Cancel',
+        onPress: () => null,
+        style: 'cancel',
+      },
+      {text: 'YES', onPress: () => logout()},
+    ]);
   };
 
   return (
     <SafeAreaView style={styles.mainView}>
       <TouchableOpacity
         onPress={() => {
-          logout();
+          logoutAlert();
         }}>
         <Text style={styles.LogoutText}>{strings.Logout}</Text>
       </TouchableOpacity>
       <Text style={styles.DashBoardText}>{strings.DashBoard}</Text>
+
       <FlatList
-        data={allData.DATA}
+        data={data1}
+        showsVerticalScrollIndicator={false}
         numColumns={2}
         renderItem={({item, index}: {item: any; index: number}) => {
-          console.log('index', index);
+          console.log(item.nameOfPackage,"item inside the function");
+          
           return (
             <View style={styles.flatListMainView}>
               <TouchableOpacity
-                style={[
-                  styles.boxView,
-                  styles.shadowOffset,
-                  {
-                    backgroundColor:
-                      index % 4 === 0
-                        ? colors.cyan
-                        : index % 4 === 1
-                        ? colors.orange
-                        : index % 4 === 2
-                        ? colors.purpule
-                        : colors.pink,
-                  },
-                ]}
+                style={
+                  isIos
+                    ? [
+                        styles.boxView,
+                        styles.shadowOffset,
+                        {
+                          backgroundColor:
+                            allData.PackageColor[
+                              index % allData.PackageColor.length
+                            ],
+                        },
+                      ]
+                    : [
+                        styles.boxView,
+                        styles.elevation,
+                        {
+                          backgroundColor:
+                            allData.PackageColor[
+                              index % allData.PackageColor.length
+                            ],
+                        },
+                      ]
+                }
                 onPress={() => {
-                  navigation.navigate(item?.nameOfPackage);
+                  navigation.navigate(
+                    item?.nameOfPackage,
+                    item?.nameOfPackage == 'Products'
+                      ? {addStocks: false}
+                      : null,
+                  );
                 }}>
-                <Text style={styles.numberDataText}>{item.numOfData}</Text>
+                <Text style={styles.packageNameText}>
+                  {item?.nameOfPackage == 'Customers'
+                    ? customerLength
+                    : item?.nameOfPackage == 'Products'
+                    ? productLength
+                    : 0}
+                </Text>
                 <Text style={styles.packageNameText}>{item.nameOfPackage}</Text>
               </TouchableOpacity>
             </View>
           );
         }}
       />
-      <View style={styles.linkView}>
-        <DashBoardLinks linkName={strings.click} />
-        <DashBoardLinks linkName={strings.GraphQLScreen} />
-        <DashBoardLinks linkName={strings.sigbatureScreen} />
-        <DashBoardLinks linkName={strings.FirebaseDemo} />
-        <DashBoardLinks linkName={strings.Notification} />
-        <DashBoardLinks linkName={strings.Mutation} />
-        <DashBoardLinks linkName={strings.Apicalling} />
-      </View>
     </SafeAreaView>
   );
 };
@@ -111,22 +182,16 @@ const styles = StyleSheet.create({
   },
   boxView: {
     height: hp(110),
-    width: wp(175),
+    width: wp(185),
     borderRadius: 10,
     justifyContent: 'center',
-    backgroundColor: 'green',
   },
   shadowOffset: {
     shadowColor: colors.black,
     shadowOffset: {width: 5, height: 10},
     shadowOpacity: 0.2,
     shadowRadius: 3,
-  },
-  numberDataText: {
-    fontSize: fontSize(30),
-    marginLeft: wp(15),
-    color: colors.white,
-    fontWeight: '700',
+    elevation: 50,
   },
   packageNameText: {
     fontSize: fontSize(30),
@@ -134,8 +199,9 @@ const styles = StyleSheet.create({
     color: colors.white,
     fontWeight: '500',
   },
-  linkView: {
-    marginBottom: hp(25),
+  elevation: {
+    elevation: 10,
+    shadowColor: colors.black,
   },
 });
 

@@ -6,50 +6,61 @@ import {
   SafeAreaView,
   Image,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, { useState} from 'react';
 import colors from '../../Constants/data/Colors';
 import strings from '../../Constants/data/Strings';
 import {fontSize, hp, validateEmail, wp} from '../../Constants/helper/helper';
-import {TextInput} from 'react-native-paper';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import EventButton from '../../Components/EventButton';
-import CustomCheckBox from '../../Components/CustomCheckBox';
 import firestore, {firebase} from '@react-native-firebase/firestore';
+import Back from '../../Components/Back';
+import EventTopac from '../../Components/EventTopac';
+import TextInputCom from '../../Components/TextInputCom';
+import {useDispatch, useSelector} from 'react-redux';
+import { addCustomerList} from '../../Redux/action/action';
 
 const AddCustomer = ({navigation, route}: any) => {
-  const {otherParam} = route?.params;
+  const {otherParam,id} = route?.params;
+  
+  const dispatch = useDispatch();
+
+  const user:any=firebase.auth().currentUser
 
   const [name, setName] = useState(otherParam?.Name || '');
-  const [phoneNo, setPhoneNo] = useState(otherParam?.PhoneNo || '');
-  const [emailAddress, setEmailAddress] = useState(otherParam?.Email || '');
   const [panNo, setPanNo] = useState(otherParam?.Pan || '');
   const [gstNo, setGstNo] = useState(otherParam?.GstNo || '');
+  const [state, setState] = useState(otherParam?.State || '');
+  const [townCity, setTownCity] = useState(otherParam?.City || '');
+  const [phoneNo, setPhoneNo] = useState(otherParam?.PhoneNo || '');
+  const [isValidName, setIsValidName] = useState(otherParam ? true : false);
+  const [isValidPan, setIsSetValidPan] = useState(otherParam ? true : false);
+  const [isValidMono, setIsSetValidMono] = useState(otherParam ? true : false);
+  const [isValidEmail, setIsSetValidEmail] = useState(otherParam ? true : false);
   const [gstState, setGstState] = useState(otherParam?.GstState || '');
   const [gstStateCode, setGstStateCode] = useState(
     otherParam?.GstStateCode || '',
   );
+  const [emailAddress, setEmailAddress] = useState(otherParam?.Email || '');
   const [address, setAddress] = useState(otherParam?.Address || '');
-  const [townCity, setTownCity] = useState(otherParam?.City || '');
-  const [state, setState] = useState(otherParam?.State || '');
-  const [isValidEmail, setIsSetValidEmail] = useState(
-    otherParam ? true : false,
+  const [shippingAddress, setShippingAddress] = useState(
+    otherParam?.ShippingAddress || '',
   );
-  const [isValidPan, setIsSetValidPan] = useState(otherParam ? true : false);
-  const [isValidMono, setIsSetValidMono] = useState(otherParam ? true : false);
-  const [isValidName, setIsValidName] = useState(otherParam ? true : false);
-  const [isChecked, setIsChecked] = useState(false);
-
-  useEffect(() => {
-    otherParam ? setIsChecked(true) : setIsChecked(false);
-  }, []);
-
-  console.log();
+  const [shippingTownCity, setShippingTownCity] = useState(
+    otherParam?.ShippingCity || '',
+  );
+  const [shippingState, setShippingState] = useState(
+    otherParam?.ShippingState || '',
+  );
+  const [isChecked, setIsChecked] = useState(
+    otherParam ? otherParam.sameAddress : false,
+  );
 
   const customerRegestraion = async () => {
     firebase
       .firestore()
-      .collection('AllCustomers')
-      .doc(Math.random().toString())
+      .collection('AllData')
+      .doc(user?.uid)
+      .collection('Customers')
+      .doc()
       .set({
         Name: name,
         PhoneNo: phoneNo,
@@ -61,8 +72,33 @@ const AddCustomer = ({navigation, route}: any) => {
         Address: address,
         City: townCity,
         State: state,
+        ShippingAddress: shippingAddress,
+        ShippingCity: shippingTownCity,
+        ShippingState: shippingState,
         sameAddress: isChecked,
-      });
+        id: new Date().getTime().toString(),
+      }).then(()=>{
+        navigation.navigate('Customers')
+      })
+
+    const customerData = {
+      Name: name,
+      PhoneNo: phoneNo,
+      Email: emailAddress,
+      Pan: panNo,
+      GstNo: gstNo,
+      GstState: gstState,
+      GstStateCode: gstStateCode,
+      Address: address,
+      City: townCity,
+      State: state,
+      ShippingAddress: shippingAddress,
+      ShippingCity: shippingTownCity,
+      ShippingState: shippingState,
+      sameAddress: isChecked,
+      id: new Date().getTime().toString(),
+    };
+    // dispatch(addCustomerList(customerData));
   };
 
   const panCheck = (value: any) => {
@@ -94,147 +130,112 @@ const AddCustomer = ({navigation, route}: any) => {
   };
 
   const isValidDataCheck = () => {
-    console.log('gstNo', isValidEmail, isValidPan, isValidMono, isValidName);
     if (
-      gstNo.length == 0 ||
-      gstState.length == 0 ||
-      gstStateCode.length == 0 ||
-      address.length == 0 ||
-      townCity.length == 0 ||
-      state.length == 0 ||
-      isChecked == false
+      isValidEmail &&
+      isValidPan &&
+      isValidMono &&
+      isValidName == true &&
+      gstNo &&
+      gstState &&
+      gstStateCode &&
+      address &&
+      townCity &&
+      state &&
+      shippingAddress &&
+      shippingTownCity &&
+      shippingState
     ) {
-      return false;
-    } else if (isValidEmail && isValidPan && isValidMono && isValidName) {
-      console.log('------- called -----------');
-
       return true;
     } else {
       return false;
     }
-    console.log('isValidEmail', isValidEmail);
-
-    // if (
-    //   name.length == 0 ||
-    //   phoneNo.length == 0 ||
-    //   emailAddress.length == 0 ||
-    //   panNo.length == 0 ||
-    //   gstNo.length == 0 ||
-    //   gstState.length == 0 ||
-    //   gstStateCode.length == 0 ||
-    //   address.length == 0 ||
-    //   townCity.length == 0 ||
-    //   state.length == 0||isChecked==false
-    // ) {
-    //   // )
-    //   return false;
-    // } else {
-    //   return true;
-    // }
-    // if (
-    //   name.length < 1 ||
-    //   phoneNo.length == 0 ||
-    //   emailAddress.length == 0 ||
-    //   panNo.length == 0 ||
-    //   gstNo.length == 0 ||
-    //   gstState.length == 0 ||
-    //   gstStateCode.length == 0 ||
-    //   address.length == 0 ||
-    //   townCity.length == 0 ||
-    //   state.length == 0
-    // ) {
-    //   // )
-    //   return false;
-    // } else {
-    //   return true;
-    // }
   };
 
   const updateData = () => {
-    firestore()
-      .collection('AllCustomers')
-      .doc(otherParam.id)
-      .update({
-        Address: address,
-        City: townCity,
-        Email: emailAddress,
-        GstNo: gstNo,
-        GstState: gstState,
-        GstStateCode: gstStateCode,
-        Name: name,
-        Pan: panNo,
-        PhoneNo: phoneNo,
-        State: phoneNo,
-      })
+    const userDetail = {
+      Address: address,
+      City: townCity,
+      Email: emailAddress,
+      GstNo: gstNo,
+      GstState: gstState,
+      GstStateCode: gstStateCode,
+      Name: name,
+      Pan: panNo,
+      PhoneNo: phoneNo,
+      State: state,
+      ShippingAddress: shippingAddress,
+      ShippingCity: shippingTownCity,
+      ShippingState: shippingState,
+      sameAddress: isChecked,
+    };
+    
+    (firestore()
+      .collection('AllData')
+      .doc(user.uid)
+      .collection('Customers')
+      .doc(id)
+      .update(userDetail))
       .then(() => {
-        navigation.navigate('Customers');
+        // dispatch(updateCustomerList({userDetail,id}))
+        navigation.navigate('DetailCustomer',{otherParam:id});
+        // navigation.navigate('Customers');
       });
   };
 
   return (
     <SafeAreaView style={styles.mainView}>
+      <EventTopac
+        topacTxt={strings.SUBMIT}
+        bottom={50}
+        fontStyle={styles.submitTxt}
+        disable={!isValidDataCheck()}
+        onPressEvent={() => {
+          {
+            otherParam != undefined ? updateData() : customerRegestraion();
+          }
+          // navigation.navigate('Customers');
+        }}
+      />
+
+      <Back backwardString={strings.CANCLE} />
       <View style={styles.allContentView}>
-        <TouchableOpacity onPress={() => navigation.navigate('Customers')}>
-          <Text style={styles.cancleText}>{strings.CANCLE}</Text>
-        </TouchableOpacity>
         <Text style={styles.AddCustomerText}>{strings.AddCustomer}</Text>
-        <KeyboardAwareScrollView>
-          <TextInput
-            style={styles.inputStyle}
+        <KeyboardAwareScrollView
+          showsVerticalScrollIndicator={false}
+          extraHeight={hp(350)}
+          style={{marginBottom: 125}}
+          enableOnAndroid={true}>
+          <TextInputCom
             label={strings.CustomerName}
-            mode="flat"
-            autoCorrect={false}
-            autoCapitalize="none"
-            activeUnderlineColor="black"
-            underlineColor="black"
             value={name}
-            onChangeText={value => {
+            onchangeText={(value: any) => {
               setName(value), validNameInput(value);
               isValidDataCheck();
             }}
           />
-
-          <TextInput
-            style={styles.inputStyle}
+          <TextInputCom
             label={strings.PhoneNo}
-            mode="flat"
-            autoCorrect={false}
-            autoCapitalize="none"
-            activeUnderlineColor="black"
-            underlineColor="black"
-            keyboardType="numeric"
             value={phoneNo}
-            onChangeText={value => {
+            keyboardType={'numeric'}
+            onchangeText={(value: any) => {
               setPhoneNo(value);
               validMoNo(value);
               isValidDataCheck();
             }}
           />
-          <TextInput
-            style={styles.inputStyle}
+          <TextInputCom
             label={strings.Email_Address}
-            mode="flat"
-            autoCorrect={false}
-            autoCapitalize="none"
-            activeUnderlineColor="black"
-            underlineColor="black"
-            keyboardType="email-address"
             value={emailAddress}
-            onChangeText={value => {
+            keyboardType={'email-address'}
+            onchangeText={(value: any) => {
               setEmailAddress(value), checkValidEmail(value);
               isValidDataCheck();
             }}
           />
-          <TextInput
-            style={styles.inputStyle}
+          <TextInputCom
             label={strings.PANNo}
-            mode="flat"
-            autoCorrect={false}
-            autoCapitalize="none"
-            activeUnderlineColor="black"
-            underlineColor="black"
             value={panNo}
-            onChangeText={value => {
+            onchangeText={(value: any) => {
               value.toUpperCase();
               setPanNo(value);
               panCheck(value);
@@ -244,142 +245,105 @@ const AddCustomer = ({navigation, route}: any) => {
           <Text style={styles.infoSuggestText}>
             {strings.CustomerGSTDetail}
           </Text>
-          <TextInput
-            style={styles.inputStyle}
+          <TextInputCom
             label={strings.GSTNo}
-            mode="flat"
-            autoCorrect={false}
-            autoCapitalize="none"
-            activeUnderlineColor="black"
-            underlineColor="black"
             value={gstNo}
-            onChangeText={value => {
+            onchangeText={(value: any) => {
               setGstNo(value);
+              isValidDataCheck();
             }}
           />
-          <TextInput
-            style={styles.inputStyle}
+          <TextInputCom
             label={strings.GSTState}
-            mode="flat"
-            autoCorrect={false}
-            autoCapitalize="none"
-            activeUnderlineColor="black"
-            underlineColor="black"
             value={gstState}
-            onChangeText={value => setGstState(value)}
+            onchangeText={(value: any) => {
+              setGstState(value), isValidDataCheck();
+            }}
           />
-          <TextInput
-            style={[styles.inputStyles, styles.relative]}
+          <TextInputCom
             label={strings.GSTStateCode}
-            mode="flat"
-            autoCorrect={false}
-            autoCapitalize="none"
-            activeUnderlineColor="black"
-            underlineColor="black"
             value={gstStateCode}
-            keyboardType="numeric"
-            onChangeText={value => setGstStateCode(value)}
+            keyboardType={'numeric'}
+            onchangeText={(value: any) => {
+              setGstStateCode(value), isValidDataCheck();
+            }}
           />
           <Text style={styles.infoSuggestText}>{strings.BillingAddress}</Text>
-          <TextInput
-            style={styles.inputStyles}
+          <TextInputCom
             label={strings.Address}
-            mode="flat"
-            autoCorrect={false}
-            autoCapitalize="none"
-            activeUnderlineColor="black"
-            underlineColor="black"
             value={address}
-            onChangeText={value => setAddress(value)}
+            onchangeText={(value: any) => {
+              setAddress(value), isValidDataCheck();
+              isChecked&&setShippingAddress(value)
+            }}
           />
-          <TextInput
-            style={styles.inputStyles}
+          <TextInputCom
             label={strings.Town_City}
-            mode="flat"
-            autoCorrect={false}
-            autoCapitalize="none"
-            activeUnderlineColor="black"
-            underlineColor="black"
             value={townCity}
-            onChangeText={value => setTownCity(value)}
+            onchangeText={(value: any) => {
+              setTownCity(value), isValidDataCheck();
+              isChecked&&setShippingTownCity(value)
+            }}
           />
-          <TextInput
-            style={styles.inputStyles}
+          <TextInputCom
             label={strings.State}
-            mode="flat"
-            autoCorrect={false}
-            autoCapitalize="none"
-            activeUnderlineColor="black"
-            underlineColor="black"
             value={state}
-            onChangeText={value => setState(value)}
+            onchangeText={(value: any) => {
+              setState(value), isValidDataCheck();
+              isChecked&&setShippingState(value)
+            }}
           />
           <View style={styles.checkBoxView}>
-            {/* <CustomCheckBox /> */}
             <TouchableOpacity
-              style={styles.mainViewOfCheckBox}
               onPress={() => {
                 setIsChecked(!isChecked);
-              }}>
-              {isChecked ? (
-                <Image
-                  source={require('../../../assets/Images/checkmark.png')}
-                  style={styles.checkMarkImg}
-                />
-              ) : null}
+                !isChecked
+                  ? (setShippingAddress(address),
+                    setShippingTownCity(townCity),
+                    setShippingState(state))
+                  : (setShippingAddress(''),
+                    setShippingTownCity(''),
+                    setShippingState(''));
+              }}
+              style={{flexDirection: 'row'}}>
+              <View style={styles.mainViewOfCheckBox}>
+                {isChecked ? (
+                  <Image
+                    source={require('../../../assets/Images/checkmark.png')}
+                    style={styles.checkMarkImg}
+                  />
+                ) : null}
+              </View>
+              <Text style={styles.checkBoxText}>
+                {strings.Shipping_address_is_same_as_billing_address}
+              </Text>
             </TouchableOpacity>
-
-            <Text style={styles.checkBoxText}>
-              {strings.Shipping_address_is_same_as_billing_address}
-            </Text>
           </View>
-          <TextInput
-            style={styles.inputStyles}
+          <TextInputCom
             label={strings.Address}
-            mode="flat"
-            autoCorrect={false}
-            autoCapitalize="none"
-            activeUnderlineColor="black"
-            underlineColor="black"
-            value={isChecked ? address : undefined}
-            editable={false}
+            value={shippingAddress}
+            editable={isChecked ? false : true}
+            onchangeText={(value: any) => {
+              setShippingAddress(value), isValidDataCheck();
+            }}
           />
-          <TextInput
-            style={styles.inputStyles}
+          <TextInputCom
             label={strings.Town_City}
-            mode="flat"
-            autoCorrect={false}
-            autoCapitalize="none"
-            activeUnderlineColor="black"
-            underlineColor="black"
-            value={isChecked ? townCity : undefined}
-            editable={false}
+            value={shippingTownCity}
+            editable={isChecked ? false : true}
+            onchangeText={(value: any) => {
+              setShippingTownCity(value), isValidDataCheck();
+            }}
           />
-          <TextInput
-            style={[styles.inputStyles, {marginBottom: hp(200)}]}
+          <TextInputCom
             label={strings.State}
-            mode="flat"
-            autoCorrect={false}
-            autoCapitalize="none"
-            activeUnderlineColor="black"
-            underlineColor="black"
-            value={isChecked ? state : undefined}
-            editable={false}
+            value={shippingState}
+            editable={isChecked ? false : true}
+            onchangeText={(value: any) => {
+              setShippingState(value), isValidDataCheck();
+            }}
           />
         </KeyboardAwareScrollView>
-
-        <EventButton
-          buttonName={strings.SUBMIT}
-          disabled={!isValidDataCheck()}
-          fontSize={15}
-          bottomSize={150}
-          onPressEvent={() => {
-            {
-              otherParam != undefined ? updateData() : customerRegestraion();
-            }
-            navigation.navigate('Customers');
-          }}
-        />
       </View>
     </SafeAreaView>
   );
@@ -390,11 +354,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
   },
-  cancleText: {
-    fontSize: fontSize(30),
-    fontWeight: '500',
-    color: colors.black,
-  },
   allContentView: {
     marginLeft: wp(25),
   },
@@ -404,36 +363,10 @@ const styles = StyleSheet.create({
     marginTop: hp(50),
     color: colors.black,
   },
-  inputStyle: {
-    height: hp(55),
-    marginTop: hp(30),
-    marginHorizontal: hp(25),
-    backgroundColor: 'white',
-    fontSize: fontSize(20),
-  },
-  inputStyles: {
-    height: hp(55),
-    marginTop: hp(30),
-    marginHorizontal: hp(25),
-    backgroundColor: 'white',
-    fontSize: fontSize(20),
-    color: colors.black,
-  },
   infoSuggestText: {
     color: colors.infoSuggestText,
-    marginLeft: wp(25),
     marginTop: hp(20),
     fontSize: fontSize(18),
-  },
-  SUBMITTopac: {
-    height: hp(100),
-    width: wp(100),
-    borderRadius: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: colors.black,
-    alignSelf: 'flex-end',
-    marginRight: wp(30),
   },
   mainViewOfCheckBox: {
     height: hp(20),
@@ -446,15 +379,9 @@ const styles = StyleSheet.create({
     height: hp(15),
     width: wp(18),
   },
-  SUBMITText: {
-    fontSize: fontSize(23),
-    fontWeight: '600',
-    color: colors.white,
-  },
   checkBoxView: {
     flexDirection: 'row',
     marginTop: hp(20),
-    marginLeft: wp(25),
   },
   checkBoxText: {
     marginLeft: wp(10),
@@ -464,10 +391,10 @@ const styles = StyleSheet.create({
   relative: {
     position: 'relative',
   },
-  submitBtnView: {
-    position: 'absolute',
-    alignSelf: 'flex-end',
-    bottom: 0,
+  submitTxt: {
+    fontSize: fontSize(15),
+    color: colors.white,
+    fontWeight: '600',
   },
 });
 

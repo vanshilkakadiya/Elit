@@ -1,8 +1,7 @@
-import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, Image, Button} from 'react-native';
 import React from 'react';
 import colors from '../Constants/data/Colors';
 import {hp, wp} from '../Constants/helper/helper';
-import {useNavigation} from '@react-navigation/native';
 
 const EventButton = ({
   buttonName,
@@ -15,7 +14,6 @@ const EventButton = ({
   logoPath,
   logoStyle
 }: any) => {
-  const {navigate}: any = useNavigation();
 
   return (
     <View style={styles.viewBottom}>
@@ -41,11 +39,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.black,
     position: 'absolute',
     alignSelf: 'flex-end',
-    height: hp(100),
+    height: hp(90),
     flex: 1,
-    width: wp(100),
+    width: wp(90),
     justifyContent: 'center',
-    borderRadius: wp(50),
+    borderRadius: wp(100),
+    zIndex:1
   },
   btnName: {
     color: colors.white,
