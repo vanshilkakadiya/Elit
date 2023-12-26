@@ -4,11 +4,11 @@ import {fontSize, wp} from '../Constants/helper/helper';
 import colors from '../Constants/data/Colors';
 import {useNavigation} from '@react-navigation/native';
 
-const Back = ({backwardString}: any) => {
+const Back = ({backwardString,onPressFunction}: any) => {
   const navigation = useNavigation();
   return (
     <View>
-      <TouchableOpacity onPress={() => navigation.goBack()}>
+      <TouchableOpacity onPress={() => onPressFunction?onPressFunction():navigation.goBack()}>
         <Text style={styles.backText}>{backwardString}</Text>
       </TouchableOpacity>
     </View>
@@ -18,7 +18,7 @@ const Back = ({backwardString}: any) => {
 const styles = StyleSheet.create({
   backText: {
     fontSize: fontSize(30),
-    marginLeft: wp(25),
+    marginHorizontal: wp(25),
     fontWeight: '500',
     color: colors.black,
   },

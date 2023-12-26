@@ -6,7 +6,7 @@ import {
   SafeAreaView,
   Image,
 } from 'react-native';
-import React, { useState} from 'react';
+import React, {useState} from 'react';
 import colors from '../../Constants/data/Colors';
 import strings from '../../Constants/data/Strings';
 import {fontSize, hp, validateEmail, wp} from '../../Constants/helper/helper';
@@ -15,15 +15,15 @@ import firestore, {firebase} from '@react-native-firebase/firestore';
 import Back from '../../Components/Back';
 import EventTopac from '../../Components/EventTopac';
 import TextInputCom from '../../Components/TextInputCom';
-import {useDispatch, useSelector} from 'react-redux';
-import { addCustomerList} from '../../Redux/action/action';
+import {useDispatch} from 'react-redux';
+import {ImagePath} from '../../../assets';
 
 const AddCustomer = ({navigation, route}: any) => {
-  const {otherParam,id} = route?.params;
-  
+  const {otherParam, id} = route?.params;
+
   const dispatch = useDispatch();
 
-  const user:any=firebase.auth().currentUser
+  const user: any = firebase.auth().currentUser;
 
   const [name, setName] = useState(otherParam?.Name || '');
   const [panNo, setPanNo] = useState(otherParam?.Pan || '');
@@ -34,7 +34,9 @@ const AddCustomer = ({navigation, route}: any) => {
   const [isValidName, setIsValidName] = useState(otherParam ? true : false);
   const [isValidPan, setIsSetValidPan] = useState(otherParam ? true : false);
   const [isValidMono, setIsSetValidMono] = useState(otherParam ? true : false);
-  const [isValidEmail, setIsSetValidEmail] = useState(otherParam ? true : false);
+  const [isValidEmail, setIsSetValidEmail] = useState(
+    otherParam ? true : false,
+  );
   const [gstState, setGstState] = useState(otherParam?.GstState || '');
   const [gstStateCode, setGstStateCode] = useState(
     otherParam?.GstStateCode || '',
@@ -77,9 +79,10 @@ const AddCustomer = ({navigation, route}: any) => {
         ShippingState: shippingState,
         sameAddress: isChecked,
         id: new Date().getTime().toString(),
-      }).then(()=>{
-        navigation.navigate('Customers')
       })
+      .then(() => {
+        navigation.navigate('Customers');
+      });
 
     const customerData = {
       Name: name,
@@ -168,17 +171,16 @@ const AddCustomer = ({navigation, route}: any) => {
       ShippingState: shippingState,
       sameAddress: isChecked,
     };
-    
-    (firestore()
+
+    firestore()
       .collection('AllData')
       .doc(user.uid)
       .collection('Customers')
       .doc(id)
-      .update(userDetail))
+      .update(userDetail)
       .then(() => {
         // dispatch(updateCustomerList({userDetail,id}))
-        navigation.navigate('DetailCustomer',{otherParam:id});
-        // navigation.navigate('Customers');
+        navigation.navigate('DetailCustomer', {otherParam: id});
       });
   };
 
@@ -193,7 +195,6 @@ const AddCustomer = ({navigation, route}: any) => {
           {
             otherParam != undefined ? updateData() : customerRegestraion();
           }
-          // navigation.navigate('Customers');
         }}
       />
 
@@ -203,7 +204,7 @@ const AddCustomer = ({navigation, route}: any) => {
         <KeyboardAwareScrollView
           showsVerticalScrollIndicator={false}
           extraHeight={hp(350)}
-          style={{marginBottom: 125}}
+          contentContainerStyle={styles.scrollView}
           enableOnAndroid={true}>
           <TextInputCom
             label={strings.CustomerName}
@@ -274,7 +275,7 @@ const AddCustomer = ({navigation, route}: any) => {
             value={address}
             onchangeText={(value: any) => {
               setAddress(value), isValidDataCheck();
-              isChecked&&setShippingAddress(value)
+              isChecked && setShippingAddress(value);
             }}
           />
           <TextInputCom
@@ -282,7 +283,7 @@ const AddCustomer = ({navigation, route}: any) => {
             value={townCity}
             onchangeText={(value: any) => {
               setTownCity(value), isValidDataCheck();
-              isChecked&&setShippingTownCity(value)
+              isChecked && setShippingTownCity(value);
             }}
           />
           <TextInputCom
@@ -290,7 +291,7 @@ const AddCustomer = ({navigation, route}: any) => {
             value={state}
             onchangeText={(value: any) => {
               setState(value), isValidDataCheck();
-              isChecked&&setShippingState(value)
+              isChecked && setShippingState(value);
             }}
           />
           <View style={styles.checkBoxView}>
@@ -305,11 +306,11 @@ const AddCustomer = ({navigation, route}: any) => {
                     setShippingTownCity(''),
                     setShippingState(''));
               }}
-              style={{flexDirection: 'row'}}>
+              style={styles.flexDirectionRow}>
               <View style={styles.mainViewOfCheckBox}>
                 {isChecked ? (
                   <Image
-                    source={require('../../../assets/Images/checkmark.png')}
+                    source={ImagePath.checkMark}
                     style={styles.checkMarkImg}
                   />
                 ) : null}
@@ -383,6 +384,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginTop: hp(20),
   },
+  scrollView: {
+    paddingBottom: hp(200),
+  },
   checkBoxText: {
     marginLeft: wp(10),
     color: colors.infoSuggestText,
@@ -390,6 +394,9 @@ const styles = StyleSheet.create({
   },
   relative: {
     position: 'relative',
+  },
+  flexDirectionRow: {
+    flexDirection: 'row',
   },
   submitTxt: {
     fontSize: fontSize(15),

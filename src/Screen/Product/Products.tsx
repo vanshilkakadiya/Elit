@@ -15,10 +15,11 @@ import {fontSize, hp, wp} from '../../Constants/helper/helper';
 import Events from '../../Components/Events';
 import {firebase} from '@react-native-firebase/firestore';
 import {useSelector} from 'react-redux';
-import EventButton from '../../Components/EventButton';
+import {ImagePath} from '../../../assets';
+import EventTopac from '../../Components/EventTopac';
 
 const Item = ({title, imagePath}: any) => (
-  <View style={styles.flatListMainView}>
+  <View style={styles.mainView}>
     <TouchableOpacity style={styles.dataBox}>
       <Image source={imagePath} style={styles.productImage} />
       <Text style={styles.productName}>{title}</Text>
@@ -27,34 +28,39 @@ const Item = ({title, imagePath}: any) => (
 );
 
 const Products = ({navigation, route}: any) => {
+  const user = firebase.auth().currentUser;
+
   const {addStocks, productDetailParam} = route?.params;
-  console.log(addStocks,"addStocksaddStocksaddStocks",productDetailParam,"productDetailParamproductDetailParamproductDetailParam");
-  
 
   const Products = useSelector((state: any) => state);
-  const [allProducts, setAllProducts]: any = useState();
+  const [allProducts, setAllProducts]: any = useState([]);
+
   const [allAmount, setAllAmount] = useState(0);
-  
-  console.log(allAmount);
 
   const [newData, setNewData]: any = useState([]);
   useEffect(() => {
     getData();
+    clearAllNewStock();
   }, []);
 
   const getData = () => {
     firebase
       .firestore()
-      .collection('AllProducts')
+      .collection('AllData')
+      .doc(user?.uid)
+      .collection('Products')
       .onSnapshot(documentSnapshot => {
         setAllProducts(documentSnapshot.docs);
       });
   };
 
   const onQuantityPress = (id: string, count: number) => {
+    console.log(id, 'id of function');
     firebase
       .firestore()
-      .collection('AllProducts')
+      .collection('AllData')
+      .doc(user?.uid)
+      .collection('Products')
       .doc(id)
       .update({
         newStock: firebase.firestore.FieldValue
@@ -67,32 +73,35 @@ const Products = ({navigation, route}: any) => {
       });
   };
 
-    const productsFromStore = useSelector(
-      (state: any) => state.products.productList,
-      );
+  const clearAllNewStock = () => {
+    productsFromStore.map((item: any) => {
+      firebase
+        .firestore()
+        .collection('AllData')
+        .doc(user?.uid)
+        .collection('Products')
+        .doc(item?.id)
+        .update({
+          newStock: 0,
+        });
+    });
+  };
+
+  const productsFromStore = useSelector(
+    (state: any) => state.products.productList,
+  );
   console.log(productsFromStore, 'after updating');
 
-  
-
   const checkNewId = (item: any, typeOfOpration: any) => {
-    console.log(typeOfOpration);
+    console.log(typeOfOpration, 'type', item, 'item');
     const temp: any = [];
     allProducts.map((value: any) => {
-      value._data.id == item._data.id
+      value._data.id == item.data.id
         ? // typeOfOpration=="plus"&&(console.log("yes",(value?._data?.newStock + 1) * value?._data?.price),temp.push((value?._data?.newStock + 1) * value?._data?.price)):(console.log((value?._data?.newStock ) * value?._data?.price),temp.push((value?._data?.newStock ) * value?._data?.price));
           typeOfOpration == 'plus'
-          ? (console.log(
-              'yes',
-              (value?._data?.newStock + 1) * value?._data?.price,
-            ),
-            temp.push((value?._data?.newStock + 1) * value?._data?.price))
-          : (console.log(
-              'yes',
-              (value?._data?.newStock - 1) * value?._data?.price,
-            ),
-            temp.push((value?._data?.newStock - 1) * value?._data?.price))
-        : (console.log(value?._data?.newStock * value?._data?.price),
-          temp.push(value?._data?.newStock * value?._data?.price));
+          ? temp.push((value?._data?.newStock + 1) * value?._data?.price)
+          : temp.push((value?._data?.newStock - 1) * value?._data?.price)
+        : temp.push(value?._data?.newStock * value?._data?.price);
     });
     let sum = 0;
     for (let i = 0; i < temp.length; i++) {
@@ -116,12 +125,12 @@ const Products = ({navigation, route}: any) => {
         data={productsFromStore}
         renderItem={({item, index}) => {
           // console.log(item,"inside the flatist");
-          
+
           return (
-            <View style={styles.flatListMainView}>
+            <View style={styles.mainView}>
               <TouchableOpacity
                 style={styles.dataBox}
-                disabled={addStocks? true : false}
+                disabled={addStocks ? true : false}
                 onPress={() => {
                   navigation.navigate('ProductDetails', {
                     otherParam: item.id,
@@ -135,16 +144,10 @@ const Products = ({navigation, route}: any) => {
                   {item?.data?.productName}
                 </Text>
                 {addStocks && (
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'flex-end',
-                      alignItems: 'center',
-                      flex: 1,
-                    }}>
+                  <View style={styles.plusMinusView}>
                     <TouchableOpacity
-                      style={{marginRight: wp(20)}}
-                      disabled={item?._data?.newStock < 1}
+                      style={styles.plusMinusMarginRight}
+                      disabled={item?.data?.newStock < 1}
                       onPress={() => {
                         onQuantityPress(item?.id, -1);
                         checkNewId(item, 'minus');
@@ -159,7 +162,7 @@ const Products = ({navigation, route}: any) => {
                       }>{`${item?.data?.newStock}`}</Text>
 
                     <TouchableOpacity
-                      style={{marginRight: wp(20)}}
+                      style={styles.plusMinusMarginRight}
                       onPress={() => {
                         newData.push(item);
                         checkNewId(item, 'plus');
@@ -177,90 +180,25 @@ const Products = ({navigation, route}: any) => {
         }}
       />
 
-
-      {/* <FlatList
-        data={allProducts}
-        renderItem={({item, index}) => {
-          return (
-            <View style={styles.flatListMainView}>
-              <TouchableOpacity
-                style={styles.dataBox}
-                disabled={productDetailParam?._data ? true : false}
-                onPress={() => {
-                  navigation.navigate('ProductDetails', {
-                    otherParam: item,
-                  });
-                }}>
-                <Image
-                  source={{uri: item?._data?.imageUrl}}
-                  style={styles.productImage}
-                />
-                <Text style={styles.productName}>
-                  {item?._data?.productName}
-                </Text>
-                {addStocks && (
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'flex-end',
-                      alignItems: 'center',
-                      flex: 1,
-                    }}>
-                    <TouchableOpacity
-                      style={{marginRight: wp(20)}}
-                      disabled={item?._data?.newStock < 1}
-                      onPress={() => {
-                        onQuantityPress(item?.id, -1);
-                        checkNewId(item, 'minus');
-                      }}>
-                      <Text style={styles.stockTextLogo}>
-                        {strings.minusLogo}
-                      </Text>
-                    </TouchableOpacity>
-                    <Text
-                      style={
-                        styles.stockText
-                      }>{`${item?._data?.newStock}`}</Text>
-
-                    <TouchableOpacity
-                      style={{marginRight: wp(20)}}
-                      onPress={() => {
-                        newData.push(item);
-                        checkNewId(item, 'plus');
-                        onQuantityPress(item?.id, 1);
-                      }}>
-                      <Text style={styles.stockTextLogo}>
-                        {strings.plusLogo}
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                )}
-              </TouchableOpacity>
-            </View>
-          );
-        }}
-      /> */}
-
       <View>
         {addStocks ? (
-          <EventButton
-            buttonName={strings.DONE}
-            fontSize={15}
-            bottomSize={10}
-            onPressEvent={() => {
-              navigation.navigate('CreateInvoice'), setAllAmount(0);
-            }}
-          />
+        
+          <EventTopac
+          topacTxt={strings.DONE}
+          bottom={50}
+          fontStyle={styles.submitTxt}
+          // disable={!isValidDataCheck()}
+          onPressEvent={() => {
+            {
+              navigation.navigate('CreateInvoice');
+            }
+          }}
+        />
         ) : (
-          <View
-            style={{
-              bottom: 100,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
+          <View style={styles.appProductView}>
             <Events
               eventText={strings.Add_Product}
-              logoPath={require('../../../assets/Images/addproduct.png')}
+              logoPath={ImagePath.addProduct}
               onPressEvent={() => {
                 navigation.navigate('AddProduct', {detail: undefined});
               }}
@@ -293,7 +231,11 @@ const styles = StyleSheet.create({
     borderColor: colors.borderColor,
     flexDirection: 'row',
   },
-  flatListMainView: {
+
+  plusMinusView: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
     flex: 1,
   },
   productName: {
@@ -308,6 +250,9 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginHorizontal: wp(5),
   },
+  plusMinusMarginRight: {
+    marginRight: wp(20)
+  },
   totalView: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -318,6 +263,11 @@ const styles = StyleSheet.create({
     fontSize: fontSize(25),
     fontWeight: '500',
     color: colors.black,
+  },
+  appProductView: {
+    bottom: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   totalNumber: {
     fontSize: fontSize(25),
@@ -333,6 +283,11 @@ const styles = StyleSheet.create({
     fontSize: fontSize(50),
     color: colors.black,
     fontWeight: '200',
+  },
+  submitTxt: {
+    fontSize: fontSize(15),
+    color: colors.white,
+    fontWeight: '600',
   },
 });
 

@@ -14,6 +14,7 @@ import {firebase} from '@react-native-firebase/auth';
 import Back from '../../Components/Back';
 import Events from '../../Components/Events';
 import {useDispatch, useSelector} from 'react-redux';
+import { ImagePath } from '../../../assets';
 // import { deleteCustomerList } from '../../Redux/action/action';
 
 const DetailCustomer = ({navigation, route}: any) => {
@@ -119,14 +120,14 @@ const DetailCustomer = ({navigation, route}: any) => {
       <View style={styles.eventView}>
         <Events
           eventText={strings.DELETE}
-          logoPath={require('../../../assets/Icon/bin.png')}
+          logoPath={ImagePath.bin}
           onPressEvent={() => {
             deleteUser();
           }}
         />
         <Events
           eventText={strings.EDIT}
-          logoPath={require('../../../assets/Icon/pen.png')}
+          logoPath={ImagePath.pen}
           onPressEvent={() => {
             navigation.navigate('AddCustomer', {
               otherParam: currentSelectUser,

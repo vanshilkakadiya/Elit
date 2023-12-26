@@ -7,22 +7,26 @@ import {
   FlatList,
   Image,
 } from 'react-native';
-import React, {  useState} from 'react';
+import React, {useState} from 'react';
 import strings from '../../Constants/data/Strings';
 import colors from '../../Constants/data/Colors';
 import {fontSize, hp, wp} from '../../Constants/helper/helper';
 import Back from '../../Components/Back';
 import {useDispatch, useSelector} from 'react-redux';
+import {ImagePath} from '../../../assets';
+import EventTopac from '../../Components/EventTopac';
 
-const Customers = ({navigation}: any) => {  
+const Customers = ({navigation}: any) => {
   const generateColor = () => {
     const randomColor = Math.floor(Math.random() * 12548431)
-    .toString(16)
-    .padStart(6, '0');
+      .toString(16)
+      .padStart(6, '0');
     return `#${randomColor}`;
   };
-  
-  const customerAllData = useSelector((state:any) => state.customer.customerData);
+
+  const customerAllData = useSelector(
+    (state: any) => state.customer.customerData,
+  );
 
   const customerRenderItem = ({item}: any) => {
     return (
@@ -40,7 +44,7 @@ const Customers = ({navigation}: any) => {
               {item?.data?.Name?.charAt(0).toUpperCase()}
             </Text>
           </View>
-          <View style={{justifyContent: 'space-evenly'}}>
+          <View style={styles.spaceEvenly}>
             <Text style={styles.customerNameText}>{item.data?.Name}</Text>
             <Text style={styles.customerContactNoText}>
               {item.data?.PhoneNo}
@@ -52,7 +56,7 @@ const Customers = ({navigation}: any) => {
   };
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: colors.white}}>
+    <SafeAreaView style={styles.mainView}>
       <Back backwardString={strings.Back} />
       <Text style={styles.customersText}>{strings.Customers}</Text>
       <FlatList
@@ -61,27 +65,18 @@ const Customers = ({navigation}: any) => {
         // @ts-ignore
         renderItem={customerRenderItem}
       />
-      <View style={[styles.topacView, {bottom: 30}]}>
-        <TouchableOpacity
-          style={styles.topac}
-          onPress={() => {
-            navigation.navigate('AddCustomer', {});
-          }}>
-          <Image
-            source={require('../../../assets/Images/plusLogo.png')}
-            style={styles.plusLogo}
-          />
-        </TouchableOpacity>
-      </View>
+
+
+<EventTopac bottom={25} isImage={true} imgeSource={ImagePath.plusLogo} onPressEvent={()=>{navigation.navigate('AddCustomer', {})}} imageStyle={styles.imageStyle}  />
+
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  topacView: {
-    position: 'absolute',
-    alignSelf: 'flex-end',
-    zIndex: 1,
+  mainView: {
+    flex: 1,
+    backgroundColor: colors.white,
   },
   topac: {
     height: hp(100),
@@ -109,6 +104,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     color: colors.black,
+  },
+  spaceEvenly: {
+    justifyContent: 'space-evenly',
   },
   dataTopac: {
     height: hp(90),
@@ -138,11 +136,17 @@ const styles = StyleSheet.create({
     width: wp(50),
     tintColor: colors.white,
     resizeMode: 'contain',
+    alignSelf: 'center',
   },
   customerContactNoText: {
     fontSize: fontSize(20),
     color: colors.black,
   },
+  imageStyle: {
+    tintColor: 'white',
+     height: hp(50),
+      width: wp(50)
+    },
 });
 
 export default Customers;

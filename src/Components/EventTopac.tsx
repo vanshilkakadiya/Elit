@@ -2,6 +2,7 @@ import {View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native';
 import React from 'react';
 import {fontSize, hp, wp} from '../Constants/helper/helper';
 import colors from '../Constants/data/Colors';
+import { ImagePath } from '../../assets';
 
 const EventTopac = ({
   fontStyle,
@@ -10,7 +11,7 @@ const EventTopac = ({
   onPressEvent,
   disable,
   isImage,
-  imgePath,
+  imgeSource,
   imageStyle,
 }: any) => {
   return (
@@ -19,8 +20,7 @@ const EventTopac = ({
         style={styles.topac}
         onPress={onPressEvent}
         disabled={disable}>
-        <Text style={fontStyle}>{topacTxt}</Text>
-        {isImage ? <Image source={imgePath} style={imageStyle} /> : null}
+        {isImage ? <Image source={imgeSource} style={imageStyle} /> :<Text style={fontStyle}>{topacTxt}</Text> }
       </TouchableOpacity>
     </View>
   );

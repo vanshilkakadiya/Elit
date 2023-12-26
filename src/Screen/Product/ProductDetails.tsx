@@ -13,6 +13,7 @@ import colors from '../../Constants/data/Colors';
 import {fontSize, hp, wp} from '../../Constants/helper/helper';
 import Events from '../../Components/Events';
 import { useSelector } from 'react-redux';
+import { ImagePath } from '../../../assets';
 
 const ProductDetails = ({route,navigation}: any) => {
   const {otherParam} = route.params;  
@@ -103,7 +104,7 @@ const ProductDetails = ({route,navigation}: any) => {
         <Events eventText={strings.Add_Stock} onPressEvent={()=>addStock()} />
         <Events
           eventText={strings.EDIT}
-          logoPath={require('../../../assets/Icon/pen.png')}
+          logoPath={ImagePath.pen}
           onPressEvent={()=>{editData()
           }}
         />

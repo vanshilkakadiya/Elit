@@ -9,6 +9,7 @@ const colors = {
   linkText: '#3383FF',
   infoSuggestText: '#8096A4',
   borderColor: '#CFCFCF',
+  invoiceBackground: '#F0F3F9',
 };
 
 export default colors;

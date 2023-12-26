@@ -1,0 +1,15 @@
+export const ImagePath={
+    addProduct:require('../assets/Icon/addproduct.png'),
+    bin:require('../assets/Icon/bin.png'),
+    camera:require('../assets/Icon/camera.png'),
+    checkMark:require('../assets/Icon/checkmark.png'),
+    gallary:require('../assets/Icon/gallery.png'),
+    hides:require('../assets/Icon/hides.png'),
+    view:require('../assets/Icon/view.png'),
+    pen:require('../assets/Icon/pen.png'),
+    plusLogo:require('../assets/Icon/plusLogo.png'),
+    rightarrow:require('../assets/Icon/rightarrow.png'),
+    upload:require('../assets/Icon/upload.png'),
+    magnifying:require('../assets/Icon/magnifying.png'),
+    rightIcon:require('../assets/Icon/rightSideArrow.png'),
+}

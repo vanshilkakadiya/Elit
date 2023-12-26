@@ -63,6 +63,17 @@ const strings = {
   Donthaveanaccount:'Dont\' have an account',
   SignUp:'Sign Up',
   HaveanAccount:'Have an Account',
-  SignIn:'Sign In'
+  SignIn:'Sign In',
+  CreateInvoice:'CreateInvoice',
+  hashinvoicetwel:'#invoice 12',
+  Draft:'Draft',
+  PdotOshleshSOnumber:'P.O/S.O number',
+  Invoicedate:'Invoice date',
+  PaymentDue:'Payment Due',
+  AddItem:'Add Item',
+  AmountDue:'Amount Due',
+  SEND:'S E N D',
+  enterProductDetailHelp:'Enter the Products details and generate bill',
+  
 };
 export default strings;
