@@ -38,8 +38,6 @@ const DetailCustomer = ({navigation, route}: any) => {
     );
   }, [route]);
 
-  const current = useSelector(state => state);
-
   const deleteUser = () => {
     firebase
       .firestore()

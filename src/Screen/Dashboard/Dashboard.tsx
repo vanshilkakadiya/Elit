@@ -18,6 +18,7 @@ import {useDispatch} from 'react-redux';
 import {addCustomerList} from '../../Redux/action/action';
 import {addProductList} from '../../Redux/action/productAction';
 import {DATA} from '../../Constants/data/DashboardPackage';
+import { addInvoice } from '../../Redux/action/invoiceAction';
 
 const Dashboard = ({navigation}: any) => {
   const dispatch = useDispatch();
@@ -29,6 +30,7 @@ const Dashboard = ({navigation}: any) => {
   useEffect(() => {
     customer_data();
     product_data();
+    invoice_date()
   }, []);
 
   const product_data = () => {
@@ -58,6 +60,24 @@ const Dashboard = ({navigation}: any) => {
         });
         setCustomerLength(temp?.length);
         dispatch(addCustomerList(temp));
+      });
+  };
+
+  const invoice_date = () => {
+    firebase
+      .firestore()
+      .collection('AllData')
+      .doc(user?.uid)
+      .collection('Invoice')
+      .onSnapshot(documentSnapshot => {
+        
+        const temp = documentSnapshot?.docs?.map(item => {
+          return {data: item?.data(), id: item?.id};
+        });
+        console.log(temp,"temp is = temptemptemptemptemptemp");
+        
+        // setCustomerLength(temp?.length);
+        dispatch(addInvoice(temp));
       });
   };
 
@@ -128,7 +148,9 @@ const Dashboard = ({navigation}: any) => {
                     item?.nameOfPackage,
                     item?.nameOfPackage == 'Products'
                       ? {addStocks: false}
-                      : null,
+                      : item?.nameOfPackage == 'Customers'
+                      ? {isInvoice: false}:null,
+                    
                   );
                 }}>
                 <Text style={styles.packageNameText}>

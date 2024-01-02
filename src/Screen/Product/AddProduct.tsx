@@ -191,7 +191,6 @@ const AddProduct = ({navigation, route}: any) => {
   };
 
   const data = useSelector((state: any) => state.products.productList);
-  console.log('data inside the add product screen', data);
 
   return (
     <SafeAreaView style={styles.mainView}>

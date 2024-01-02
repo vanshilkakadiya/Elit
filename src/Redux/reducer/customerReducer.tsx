@@ -5,7 +5,7 @@ import {
 } from '../action/action';
 
 const initialState: any = {
-  customerList: [],
+  // customerList: [],
   customerData: [],
 };
 

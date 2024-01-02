@@ -65,7 +65,7 @@ const strings = {
   HaveanAccount:'Have an Account',
   SignIn:'Sign In',
   CreateInvoice:'CreateInvoice',
-  hashinvoicetwel:'#invoice 12',
+  hashinvoice:'#invoice',
   Draft:'Draft',
   PdotOshleshSOnumber:'P.O/S.O number',
   Invoicedate:'Invoice date',
@@ -74,6 +74,8 @@ const strings = {
   AmountDue:'Amount Due',
   SEND:'S E N D',
   enterProductDetailHelp:'Enter the Products details and generate bill',
-  
+  tomorrow:'tomorrow',
+  today:'today',
+  yesterday:'yesterday'
 };
 export default strings;

@@ -5,18 +5,22 @@ import {
   StyleSheet,
   SafeAreaView,
   FlatList,
-  Image,
 } from 'react-native';
-import React, {useState} from 'react';
+import React from 'react';
 import strings from '../../Constants/data/Strings';
 import colors from '../../Constants/data/Colors';
 import {fontSize, hp, wp} from '../../Constants/helper/helper';
 import Back from '../../Components/Back';
-import {useDispatch, useSelector} from 'react-redux';
+import { useSelector} from 'react-redux';
 import {ImagePath} from '../../../assets';
 import EventTopac from '../../Components/EventTopac';
 
-const Customers = ({navigation}: any) => {
+const Customers = ({navigation,route}: any) => {
+
+  const { isInvoice } = route?.params??(route);
+  console.log(isInvoice,"isInvoiceisInvoiceisInvoiceisInvoiceisInvoice");
+  
+
   const generateColor = () => {
     const randomColor = Math.floor(Math.random() * 12548431)
       .toString(16)
@@ -34,9 +38,13 @@ const Customers = ({navigation}: any) => {
         <TouchableOpacity
           style={styles.dataTopac}
           onPress={() =>
+            !isInvoice?
             navigation.navigate('DetailCustomer', {
               otherParam: item.id,
-            })
+            }
+            ):
+            // console.log(item.id,"item of selected")
+            navigation.navigate('CreateInvoice',{ selectedCustomer: item.id})
           }>
           <View
             style={[styles.firstLetter, {backgroundColor: generateColor()}]}>
@@ -66,8 +74,9 @@ const Customers = ({navigation}: any) => {
         renderItem={customerRenderItem}
       />
 
-
+{!isInvoice&&
 <EventTopac bottom={25} isImage={true} imgeSource={ImagePath.plusLogo} onPressEvent={()=>{navigation.navigate('AddCustomer', {})}} imageStyle={styles.imageStyle}  />
+}
 
     </SafeAreaView>
   );

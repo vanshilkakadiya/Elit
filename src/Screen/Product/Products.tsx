@@ -30,12 +30,13 @@ const Item = ({title, imagePath}: any) => (
 const Products = ({navigation, route}: any) => {
   const user = firebase.auth().currentUser;
 
-  const {addStocks, productDetailParam} = route?.params;
+  const {addStocks} = route?.params ?? {route};
 
   const Products = useSelector((state: any) => state);
   const [allProducts, setAllProducts]: any = useState([]);
 
-  const [allAmount, setAllAmount] = useState(0);
+  const [allAmount, setAllAmount]: any = useState();
+  console.log(allAmount, 'allAmountallAmountallAmount');
 
   const [newData, setNewData]: any = useState([]);
   useEffect(() => {
@@ -73,27 +74,27 @@ const Products = ({navigation, route}: any) => {
       });
   };
 
-  const clearAllNewStock = () => {
-    productsFromStore.map((item: any) => {
-      firebase
-        .firestore()
-        .collection('AllData')
-        .doc(user?.uid)
-        .collection('Products')
-        .doc(item?.id)
-        .update({
-          newStock: 0,
-        });
-    });
-  };
-
+  //   const clearAllNewStock = () => {
+  //     productsFromStore.map((item: any) => {
+  //       firebase
+  //         .firestore()
+  //         .collection('AllData')
+  //         .doc(user?.uid)
+  //         .collection('Products')
+  //         .doc(item?.id)
+  //         .update({
+  //           newStock: 0,
+  //         });
+  //     });
+  //   };
+  //
   const productsFromStore = useSelector(
     (state: any) => state.products.productList,
   );
-  console.log(productsFromStore, 'after updating');
+  // console.log(productsFromStore, 'after updating');
 
   const checkNewId = (item: any, typeOfOpration: any) => {
-    console.log(typeOfOpration, 'type', item, 'item');
+    // console.log(typeOfOpration, 'type', item, 'item');
     const temp: any = [];
     allProducts.map((value: any) => {
       value._data.id == item.data.id
@@ -109,6 +110,21 @@ const Products = ({navigation, route}: any) => {
     }
     setAllAmount(sum);
   };
+
+  const clearAllNewStock = () => {
+    productsFromStore.map((item: any) => {
+      firebase
+        .firestore()
+        .collection('AllData')
+        .doc(user?.uid)
+        .collection('Products')
+        .doc(item?.id)
+        .update({
+          newStock: 0,
+        });
+    });
+  };
+
 
   return (
     <SafeAreaView style={styles.mainView}>
@@ -132,9 +148,11 @@ const Products = ({navigation, route}: any) => {
                 style={styles.dataBox}
                 disabled={addStocks ? true : false}
                 onPress={() => {
-                  navigation.navigate('ProductDetails', {
-                    otherParam: item.id,
-                  });
+                  {
+                    navigation.navigate('ProductDetails', {
+                      otherParam: item.id,
+                    });
+                  }
                 }}>
                 <Image
                   source={{uri: item?.data?.imageUrl}}
@@ -145,17 +163,19 @@ const Products = ({navigation, route}: any) => {
                 </Text>
                 {addStocks && (
                   <View style={styles.plusMinusView}>
-                    <TouchableOpacity
-                      style={styles.plusMinusMarginRight}
-                      disabled={item?.data?.newStock < 1}
-                      onPress={() => {
-                        onQuantityPress(item?.id, -1);
-                        checkNewId(item, 'minus');
-                      }}>
-                      <Text style={styles.stockTextLogo}>
-                        {strings.minusLogo}
-                      </Text>
-                    </TouchableOpacity>
+                    {item?.data?.newStock > 0 && (
+                      <TouchableOpacity
+                        style={styles.plusMinusMarginRight}
+                        disabled={item?.data?.newStock < 1}
+                        onPress={() => {
+                          onQuantityPress(item?.id, -1);
+                          checkNewId(item, 'minus');
+                        }}>
+                        <Text style={styles.stockTextLogo}>
+                          {strings.minusLogo}
+                        </Text>
+                      </TouchableOpacity>
+                    )}
                     <Text
                       style={
                         styles.stockText
@@ -182,18 +202,18 @@ const Products = ({navigation, route}: any) => {
 
       <View>
         {addStocks ? (
-        
           <EventTopac
-          topacTxt={strings.DONE}
-          bottom={50}
-          fontStyle={styles.submitTxt}
-          // disable={!isValidDataCheck()}
-          onPressEvent={() => {
-            {
-              navigation.navigate('CreateInvoice');
-            }
-          }}
-        />
+            topacTxt={strings.DONE}
+            bottom={50}
+            fontStyle={styles.submitTxt}
+            // disable={!isValidDataCheck()}
+            onPressEvent={() => {
+              {
+                clearAllNewStock(),
+                navigation.navigate('CreateInvoice', {amount: allAmount});
+              }
+            }}
+          />
         ) : (
           <View style={styles.appProductView}>
             <Events
@@ -251,7 +271,7 @@ const styles = StyleSheet.create({
     marginHorizontal: wp(5),
   },
   plusMinusMarginRight: {
-    marginRight: wp(20)
+    marginRight: wp(20),
   },
   totalView: {
     flexDirection: 'row',
