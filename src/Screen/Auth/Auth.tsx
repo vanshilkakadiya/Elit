@@ -51,9 +51,6 @@ const Auth = ({navigation}: any) => {
     auth()
       .signInWithEmailAndPassword(email, password)
       .then(res => {
-        console.log(res);
-        console.log('User logged-in successfully!');
-        // navigation.navigate('Dashboard'),
         navigation.replace('Dashboard');
         setPassword(''), setEmail(''), setConfirmPassword('');
       })
@@ -78,7 +75,7 @@ const Auth = ({navigation}: any) => {
 
   return (
     <SafeAreaView style={styles.mainView}>
-      <View style={styles.appLogoView}>
+      <View>
         <indexs.SVGComponent />
         {login ? (
           <Text style={styles.ELIT_LoginTxt}>{strings.ELIT_Login}</Text>
@@ -197,19 +194,12 @@ const Auth = ({navigation}: any) => {
   );
 };
 const styles = StyleSheet.create({
-  appLogoView: {
-    // marginVertical: hp(50),
-  },
   ELIT_LoginTxt: {
     fontSize: fontSize(50),
     fontWeight: '500',
     marginLeft: wp(25),
     marginTop: hp(50),
     color: colors.black,
-  },
-  mainConatinerStyle: {
-    flex: 1,
-    justifyContent: 'flex-end',
   },
   mainView: {
     flex: 1,
@@ -219,17 +209,6 @@ const styles = StyleSheet.create({
     color: colors.red,
     marginLeft: wp(40),
     fontSize: fontSize(20),
-  },
-  nextBtn: {
-    height: hp(100),
-    width: wp(100),
-    backgroundColor: colors.black,
-    borderRadius: hp(150),
-    marginRight: wp(25),
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'flex-end',
-    marginBottom: hp(10),
   },
   nextText: {
     color: colors.white,

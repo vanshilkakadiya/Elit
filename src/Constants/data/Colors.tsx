@@ -10,6 +10,7 @@ const colors = {
   infoSuggestText: '#8096A4',
   borderColor: '#CFCFCF',
   invoiceBackground: '#F0F3F9',
+  green:'green'
 };
 
 export default colors;

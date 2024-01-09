@@ -23,40 +23,29 @@ import {addInvoice} from '../../Redux/action/invoiceAction';
 
 const CreateInvoice = ({navigation, route}: any) => {
   const {selectedCustomer, amount} = route?.params ?? {route};
-  console.log(selectedCustomer, 'selectedCustomerselectedCustomer');
-  console.log(amount, 'amountamountamount');
 
   const user: any = firebase.auth().currentUser;
-  console.log(user, 'useruseruser');
-
   const [currentUser, setCurrentUser]: any = useState();
   const [invoiceCart, setInvoiceCart]: any = useState();
   const [addedProduct, setAddedProduct]: any = useState();
-  console.log(addedProduct, 'invoiceCartinvoiceCartinvoiceCart');
   const [allAmount, setAllAmount] = useState(0);
   const [invoiceIndex, setInvoiceIndex] = useState(0);
-  console.log(invoiceIndex, 'invoiceIndexinvoiceIndexinvoiceIndex');
+  const [nextMonthDates, setNextMonthDates]: any = useState('');
+  const [nextMonthYear, setNextMonthYear]: any = useState('');
+  const [invoiceDate, setInvoiceDate] = useState<Date>(new Date());
+  const [paymentDate, setPaymentDate] = useState<Date>(new Date());
+  const [isInvoiceDate, setIsInvoiceDate] = useState(false);
+  const [opneDatePicker, setOpneDatePicker] = useState(false);
 
   const productsFromStore = useSelector(
     (state: any) => state.products.productList,
   );
-  const a = useSelector((state: any) => state);
-  console.log(a, 'a is =======');
 
   const customerData = useSelector((state: any) => state.customer.customerData);
-  // console.log(customerData,"customerDatacustomerDatacustomerDatacustomerData");
-  // useEffect(() => {
-  //   customerData.map((item: any) => {
-  //     selectedCustomer == item.id && setCurrentUser(item);
-  //     // console.log(item,"123");
-  //   });
-  // },[route]);
 
   useEffect(() => {
     customerData.filter((value: any) => {
-      console.log(value, 'inside the valuevaluevalue'),
-        value.id == selectedCustomer &&
-          (console.log(value, 'value insidet '), setCurrentUser(value));
+      value.id == selectedCustomer && setCurrentUser(value);
     });
 
     setAllAmount(amount);
@@ -67,8 +56,6 @@ const CreateInvoice = ({navigation, route}: any) => {
         ? (a.push(item?.data?.productName), allProducts.push(item))
         : null;
     });
-    console.log(allProducts, 'allProductsallProductsallProducts');
-
     setInvoiceCart(a);
     setAddedProduct(allProducts);
   }, [route]);
@@ -82,10 +69,8 @@ const CreateInvoice = ({navigation, route}: any) => {
       0,
     ).getDate();
     currentDate.setDate(Math.min(currentDate.getDate(), lastDayOfMonth));
-
     setNextMonthDates(currentDate);
     setNextMonthYear(currentDate.getFullYear());
-
     getInvoiceIndex();
   }, []);
 
@@ -102,14 +87,6 @@ const CreateInvoice = ({navigation, route}: any) => {
         setInvoiceIndex(querySnapshot.size + 1);
       });
   };
-
-  const [nextMonthDates, setNextMonthDates]: any = useState('');
-
-  const [nextMonthYear, setNextMonthYear]: any = useState('');
-  const [invoiceDate, setInvoiceDate] = useState<Date>(new Date());
-  const [paymentDate, setPaymentDate] = useState<Date>(new Date());
-  const [isInvoiceDate, setIsInvoiceDate] = useState(false);
-  const [opneDatePicker, setOpneDatePicker] = useState(false);
 
   const helpAlert = () => {
     Alert.alert(strings.HELP, strings.enterProductDetailHelp, [
@@ -128,23 +105,21 @@ const CreateInvoice = ({navigation, route}: any) => {
         customer: currentUser,
         product: addedProduct,
         invoiceDate: moment(invoiceDate).format('D,MMMM,YYYY'),
-        // invoiceDate:invoiceDate,
         paymentDate: moment(paymentDate).format('D,MMMM,YYYY'),
-        // paymentData:paymentDate,
         totalAmount: allAmount,
         invoiceNumber: invoiceIndex,
       });
 
     dispatch(
       addInvoice({
-        customer: currentUser,
-        product: addedProduct,
-        // invoiceDate:invoiceDate,
-        invoiceDate: moment(invoiceDate).format('D, MMMM, YYYY'),
-        // paymentData:paymentDate,
-        paymentDate: moment(paymentDate).format('D, MMMM, YYYY'),
-        totalAmount: allAmount,
-        invoiceNumber: invoiceIndex,
+        data: {
+          customer: currentUser,
+          product: addedProduct,
+          invoiceDate: moment(invoiceDate).format('D, MMMM, YYYY'),
+          paymentDate: moment(paymentDate).format('D, MMMM, YYYY'),
+          totalAmount: allAmount,
+          invoiceNumber: invoiceIndex,
+        },
       }),
     );
   };
@@ -211,7 +186,6 @@ const CreateInvoice = ({navigation, route}: any) => {
                 <Text style={styles.fontSize20}></Text>
                 <Text style={styles.fontSize20}>
                   {moment(invoiceDate).format('D, MMMM, YYYY')}
-                  
                 </Text>
                 <Image source={ImagePath.rightIcon} style={styles.rightIcon} />
               </View>
@@ -225,21 +199,9 @@ const CreateInvoice = ({navigation, route}: any) => {
                 setOpneDatePicker(true);
               }}>
               <View style={styles.flexDirectionRow}>
-                {/* <Text style={styles.fontSize20}> */}
-                {/* {` ${nextMonthDates?.getDate?.() ?? ''}, ${nextMonthDates?.toLocaleString('default', {month: 'long'})}, ${nextMonthYear}`} */}
-                {/* {paymentDate==undefined?
-                     `${nextMonthDates?.getDate?.() ?? ''}, ${nextMonthDates?.toLocaleString('default', {month: 'long'})}, ${nextMonthDates?.getFullYear?.()}`:
-        
-                    {/* {paymentDate?.getTime()<invoiceDate.getTime()&&`${invoiceDate?.getDate?.() ?? ''}, ${invoiceDate?.toLocaleString('default', {month: 'long'})}, ${invoiceDate?.getFullYear?.()}`} */}
-
-                {/* {`${paymentDate?.getDate?.() ?? ''}, ${paymentDate?.toLocaleString('default', {month: 'long'})}, ${paymentDate?.getFullYear?.()}`} */}
-                {/* </Text> */}
-
                 <Text style={styles.fontSize20}>
                   {moment(paymentDate).format('D, MMMM, YYYY')}
                 </Text>
-
-                {/* )} */}
                 <Image source={ImagePath.rightIcon} style={styles.rightIcon} />
               </View>
             </TouchableOpacity>
@@ -304,7 +266,6 @@ const CreateInvoice = ({navigation, route}: any) => {
           </View>
         </View>
       </ScrollView>
-
       <EventTopac
         bottom={50}
         disable={!allAmount || !currentUser}

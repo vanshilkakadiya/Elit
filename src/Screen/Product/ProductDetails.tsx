@@ -6,51 +6,49 @@ import {
   Image,
   ScrollView,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import Back from '../../Components/Back';
 import strings from '../../Constants/data/Strings';
 import colors from '../../Constants/data/Colors';
 import {fontSize, hp, wp} from '../../Constants/helper/helper';
 import Events from '../../Components/Events';
-import { useSelector } from 'react-redux';
-import { ImagePath } from '../../../assets';
+import {useSelector} from 'react-redux';
+import {ImagePath} from '../../../assets';
 
-const ProductDetails = ({route,navigation}: any) => {
-  const {otherParam} = route.params;  
-  console.log(otherParam,"otherParamotherParamotherParamotherParam");
-  
-    
-  const [selectedProduct,setSelectedProduct]:any=useState([])
-  const currentProduct=selectedProduct?.data
-  // console.log("otherParams",selectedProduct);
-  
+const ProductDetails = ({route, navigation}: any) => {
+  const {otherParam} = route.params;
+  const [selectedProduct, setSelectedProduct]: any = useState([]);
+  const currentProduct = selectedProduct?.data;
 
-  const editData=()=>{    
-    navigation.navigate('AddProduct',{detail:selectedProduct})
-  }
-  const addStock=()=>{
-    navigation.navigate('Products',{addStocks:true,productDetailParam:otherParam})
-  }
+  const editData = () => {
+    navigation.navigate('AddProduct', {detail: selectedProduct});
+  };
+  const addStock = () => {
+    navigation.navigate('Products', {
+      addStocks: true,
+      productDetailParam: otherParam,
+    });
+  };
 
-  const  currentProducts  = useSelector((state:any) => state);
-  useEffect(()=>{
-   currentProducts?.products?.productList.filter((val:any)=>{
-      val.id==otherParam&&
-      setSelectedProduct(val)
-    })
-  },[route])
-  
+  const currentProducts = useSelector((state: any) => state);
+  useEffect(() => {
+    currentProducts?.products?.productList.filter((val: any) => {
+      val.id == otherParam && setSelectedProduct(val);
+    });
+  }, [route]);
+
   return (
     <SafeAreaView style={styles.mainView}>
       <Back backwardString={strings.Back} />
       <View style={styles.flexOne}>
         <View style={styles.imageDetails}>
           <Text style={styles.productNameHeading}>
-            {/* {otherParam?._data?.productName} */}
             {currentProduct?.productName}
           </Text>
           <Image
-            source={{uri: currentProduct?.imageUrl ? currentProduct?.imageUrl : null}}
+            source={{
+              uri: currentProduct?.imageUrl ? currentProduct?.imageUrl : null,
+            }}
             style={styles.image}
           />
         </View>
@@ -101,11 +99,12 @@ const ProductDetails = ({route,navigation}: any) => {
       </View>
 
       <View style={styles.eventTopac}>
-        <Events eventText={strings.Add_Stock} onPressEvent={()=>addStock()} />
+        <Events eventText={strings.Add_Stock} onPressEvent={() => addStock()} />
         <Events
           eventText={strings.EDIT}
           logoPath={ImagePath.pen}
-          onPressEvent={()=>{editData()
+          onPressEvent={() => {
+            editData();
           }}
         />
       </View>

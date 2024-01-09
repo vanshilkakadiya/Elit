@@ -11,15 +11,12 @@ import strings from '../../Constants/data/Strings';
 import colors from '../../Constants/data/Colors';
 import {fontSize, hp, wp} from '../../Constants/helper/helper';
 import Back from '../../Components/Back';
-import { useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
 import {ImagePath} from '../../../assets';
 import EventTopac from '../../Components/EventTopac';
 
-const Customers = ({navigation,route}: any) => {
-
-  const { isInvoice } = route?.params??(route);
-  console.log(isInvoice,"isInvoiceisInvoiceisInvoiceisInvoiceisInvoice");
-  
+const Customers = ({navigation, route}: any) => {
+  const {isInvoice} = route?.params ?? route;
 
   const generateColor = () => {
     const randomColor = Math.floor(Math.random() * 12548431)
@@ -38,13 +35,13 @@ const Customers = ({navigation,route}: any) => {
         <TouchableOpacity
           style={styles.dataTopac}
           onPress={() =>
-            !isInvoice?
-            navigation.navigate('DetailCustomer', {
-              otherParam: item.id,
-            }
-            ):
-            // console.log(item.id,"item of selected")
-            navigation.navigate('CreateInvoice',{ selectedCustomer: item.id})
+            !isInvoice
+              ? navigation.navigate('DetailCustomer', {
+                  otherParam: item.id,
+                })
+              : navigation.navigate('CreateInvoice', {
+                  selectedCustomer: item.id,
+                })
           }>
           <View
             style={[styles.firstLetter, {backgroundColor: generateColor()}]}>
@@ -74,10 +71,17 @@ const Customers = ({navigation,route}: any) => {
         renderItem={customerRenderItem}
       />
 
-{!isInvoice&&
-<EventTopac bottom={25} isImage={true} imgeSource={ImagePath.plusLogo} onPressEvent={()=>{navigation.navigate('AddCustomer', {})}} imageStyle={styles.imageStyle}  />
-}
-
+      {!isInvoice && (
+        <EventTopac
+          bottom={25}
+          isImage={true}
+          imgeSource={ImagePath.plusLogo}
+          onPressEvent={() => {
+            navigation.navigate('AddCustomer', {});
+          }}
+          imageStyle={styles.imageStyle}
+        />
+      )}
     </SafeAreaView>
   );
 };
@@ -153,9 +157,9 @@ const styles = StyleSheet.create({
   },
   imageStyle: {
     tintColor: 'white',
-     height: hp(50),
-      width: wp(50)
-    },
+    height: hp(50),
+    width: wp(50),
+  },
 });
 
 export default Customers;

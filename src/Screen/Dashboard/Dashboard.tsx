@@ -18,19 +18,20 @@ import {useDispatch} from 'react-redux';
 import {addCustomerList} from '../../Redux/action/action';
 import {addProductList} from '../../Redux/action/productAction';
 import {DATA} from '../../Constants/data/DashboardPackage';
-import { addInvoice } from '../../Redux/action/invoiceAction';
+import { setInvoiceData} from '../../Redux/action/invoiceAction';
 
 const Dashboard = ({navigation}: any) => {
   const dispatch = useDispatch();
-  const [productLength, setProductLength]:any = useState();
-  const [customerLength, setCustomerLength]:any = useState();
+  const [productLength, setProductLength]: any = useState();
+  const [customerLength, setCustomerLength]: any = useState();
+  const [invoiceLength, setInvoiceLength]: any = useState();
   const user: any = firebase.auth().currentUser;
   const data1 = DATA;
 
   useEffect(() => {
     customer_data();
     product_data();
-    invoice_date()
+    invoice_date();
   }, []);
 
   const product_data = () => {
@@ -70,14 +71,11 @@ const Dashboard = ({navigation}: any) => {
       .doc(user?.uid)
       .collection('Invoice')
       .onSnapshot(documentSnapshot => {
-        
         const temp = documentSnapshot?.docs?.map(item => {
-          return {data: item?.data(), id: item?.id};
+          return {data: {...item?.data()}, id: item?.id};
         });
-        console.log(temp,"temp is = temptemptemptemptemptemp");
-        
-        // setCustomerLength(temp?.length);
-        dispatch(addInvoice(temp));
+        setInvoiceLength(temp?.length);
+        dispatch(setInvoiceData(temp));
       });
   };
 
@@ -115,8 +113,6 @@ const Dashboard = ({navigation}: any) => {
         showsVerticalScrollIndicator={false}
         numColumns={2}
         renderItem={({item, index}: {item: any; index: number}) => {
-          console.log(item.nameOfPackage,"item inside the function");
-          
           return (
             <View style={styles.flatListMainView}>
               <TouchableOpacity
@@ -149,8 +145,8 @@ const Dashboard = ({navigation}: any) => {
                     item?.nameOfPackage == 'Products'
                       ? {addStocks: false}
                       : item?.nameOfPackage == 'Customers'
-                      ? {isInvoice: false}:null,
-                    
+                      ? {isInvoice: false}
+                      : null,
                   );
                 }}>
                 <Text style={styles.packageNameText}>
@@ -158,6 +154,8 @@ const Dashboard = ({navigation}: any) => {
                     ? customerLength
                     : item?.nameOfPackage == 'Products'
                     ? productLength
+                    : item?.nameOfPackage == 'Invoices'
+                    ? invoiceLength
                     : 0}
                 </Text>
                 <Text style={styles.packageNameText}>{item.nameOfPackage}</Text>

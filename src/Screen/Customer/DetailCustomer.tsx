@@ -1,11 +1,4 @@
-import {
-  View,
-  Text,
-  SafeAreaView,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-} from 'react-native';
+import {View, Text, SafeAreaView, StyleSheet, ScrollView} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import strings from '../../Constants/data/Strings';
 import {fontSize, hp, wp} from '../../Constants/helper/helper';
@@ -13,9 +6,8 @@ import colors from '../../Constants/data/Colors';
 import {firebase} from '@react-native-firebase/auth';
 import Back from '../../Components/Back';
 import Events from '../../Components/Events';
-import {useDispatch, useSelector} from 'react-redux';
-import { ImagePath } from '../../../assets';
-// import { deleteCustomerList } from '../../Redux/action/action';
+import {useSelector} from 'react-redux';
+import {ImagePath} from '../../../assets';
 
 const DetailCustomer = ({navigation, route}: any) => {
   // @ts-ignore
@@ -24,8 +16,6 @@ const DetailCustomer = ({navigation, route}: any) => {
   const currentSelectUser = selectedUser?.data;
 
   const user: any = firebase.auth().currentUser;
-
-  const dispatch: any = useDispatch();
 
   const {otherParam} = route.params;
   console.log(otherParam, 'otherParamotherParamotherParam');
@@ -52,7 +42,6 @@ const DetailCustomer = ({navigation, route}: any) => {
       .catch(err => {
         console.log('erororororororororor', err);
       });
-    // dispatch(deleteCustomerList(otherParam))
   };
 
   return (

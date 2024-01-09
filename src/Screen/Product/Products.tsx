@@ -18,27 +18,14 @@ import {useSelector} from 'react-redux';
 import {ImagePath} from '../../../assets';
 import EventTopac from '../../Components/EventTopac';
 
-const Item = ({title, imagePath}: any) => (
-  <View style={styles.mainView}>
-    <TouchableOpacity style={styles.dataBox}>
-      <Image source={imagePath} style={styles.productImage} />
-      <Text style={styles.productName}>{title}</Text>
-    </TouchableOpacity>
-  </View>
-);
-
 const Products = ({navigation, route}: any) => {
   const user = firebase.auth().currentUser;
 
   const {addStocks} = route?.params ?? {route};
-
-  const Products = useSelector((state: any) => state);
   const [allProducts, setAllProducts]: any = useState([]);
-
   const [allAmount, setAllAmount]: any = useState();
-  console.log(allAmount, 'allAmountallAmountallAmount');
-
   const [newData, setNewData]: any = useState([]);
+  
   useEffect(() => {
     getData();
     clearAllNewStock();
@@ -56,7 +43,6 @@ const Products = ({navigation, route}: any) => {
   };
 
   const onQuantityPress = (id: string, count: number) => {
-    console.log(id, 'id of function');
     firebase
       .firestore()
       .collection('AllData')
@@ -74,32 +60,15 @@ const Products = ({navigation, route}: any) => {
       });
   };
 
-  //   const clearAllNewStock = () => {
-  //     productsFromStore.map((item: any) => {
-  //       firebase
-  //         .firestore()
-  //         .collection('AllData')
-  //         .doc(user?.uid)
-  //         .collection('Products')
-  //         .doc(item?.id)
-  //         .update({
-  //           newStock: 0,
-  //         });
-  //     });
-  //   };
-  //
   const productsFromStore = useSelector(
     (state: any) => state.products.productList,
   );
-  // console.log(productsFromStore, 'after updating');
 
   const checkNewId = (item: any, typeOfOpration: any) => {
-    // console.log(typeOfOpration, 'type', item, 'item');
     const temp: any = [];
     allProducts.map((value: any) => {
       value._data.id == item.data.id
-        ? // typeOfOpration=="plus"&&(console.log("yes",(value?._data?.newStock + 1) * value?._data?.price),temp.push((value?._data?.newStock + 1) * value?._data?.price)):(console.log((value?._data?.newStock ) * value?._data?.price),temp.push((value?._data?.newStock ) * value?._data?.price));
-          typeOfOpration == 'plus'
+        ? typeOfOpration == 'plus'
           ? temp.push((value?._data?.newStock + 1) * value?._data?.price)
           : temp.push((value?._data?.newStock - 1) * value?._data?.price)
         : temp.push(value?._data?.newStock * value?._data?.price);
@@ -125,7 +94,6 @@ const Products = ({navigation, route}: any) => {
     });
   };
 
-
   return (
     <SafeAreaView style={styles.mainView}>
       <Back backwardString={strings.Back} />
@@ -139,9 +107,7 @@ const Products = ({navigation, route}: any) => {
 
       <FlatList
         data={productsFromStore}
-        renderItem={({item, index}) => {
-          // console.log(item,"inside the flatist");
-
+        renderItem={({item}) => {
           return (
             <View style={styles.mainView}>
               <TouchableOpacity
@@ -210,7 +176,7 @@ const Products = ({navigation, route}: any) => {
             onPressEvent={() => {
               {
                 clearAllNewStock(),
-                navigation.navigate('CreateInvoice', {amount: allAmount});
+                  navigation.navigate('CreateInvoice', {amount: allAmount});
               }
             }}
           />

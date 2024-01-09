@@ -21,8 +21,6 @@ import {ImagePath} from '../../../assets';
 const AddCustomer = ({navigation, route}: any) => {
   const {otherParam, id} = route?.params;
 
-  const dispatch = useDispatch();
-
   const user: any = firebase.auth().currentUser;
 
   const [name, setName] = useState(otherParam?.Name || '');
@@ -83,25 +81,6 @@ const AddCustomer = ({navigation, route}: any) => {
       .then(() => {
         navigation.navigate('Customers');
       });
-
-    const customerData = {
-      Name: name,
-      PhoneNo: phoneNo,
-      Email: emailAddress,
-      Pan: panNo,
-      GstNo: gstNo,
-      GstState: gstState,
-      GstStateCode: gstStateCode,
-      Address: address,
-      City: townCity,
-      State: state,
-      ShippingAddress: shippingAddress,
-      ShippingCity: shippingTownCity,
-      ShippingState: shippingState,
-      sameAddress: isChecked,
-      id: new Date().getTime().toString(),
-    };
-    // dispatch(addCustomerList(customerData));
   };
 
   const panCheck = (value: any) => {
@@ -179,7 +158,6 @@ const AddCustomer = ({navigation, route}: any) => {
       .doc(id)
       .update(userDetail)
       .then(() => {
-        // dispatch(updateCustomerList({userDetail,id}))
         navigation.navigate('DetailCustomer', {otherParam: id});
       });
   };

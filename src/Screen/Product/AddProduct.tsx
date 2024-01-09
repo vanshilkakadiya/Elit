@@ -19,20 +19,11 @@ import {firebase} from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import {useDispatch, useSelector} from 'react-redux';
 import TextInputCom from '../../Components/TextInputCom';
-import {
-  ADD_PRODUCT,
-  UPDATE_PRODUCT,
-  addProductList,
-} from '../../Redux/action/productAction';
+import {addProductList} from '../../Redux/action/productAction';
 import {ImagePath} from '../../../assets';
 
 const AddProduct = ({navigation, route}: any) => {
   const {detail} = route?.params;
-
-  console.log(
-    detail?.id,
-    'detaildetaildetaildetaildetaildetaildetaildetaildetail',
-  );
 
   const [imagePath, setImagePath] = useState(detail?.data?.imageUrl || '');
   const [updatedImagePath, setUpdatedImagePath] = useState('');
@@ -50,7 +41,6 @@ const AddProduct = ({navigation, route}: any) => {
   const [imageUrl, setImageUrl] = useState(detail?.data?.imageUrl || '');
 
   const dispatch = useDispatch();
-
   const user = firebase.auth().currentUser;
 
   const chooseFromGallary = () => {
@@ -59,8 +49,6 @@ const AddProduct = ({navigation, route}: any) => {
       height: 1000,
       cropping: true,
     }).then(image => {
-      console.log(image.path, 'image from gallary');
-
       setImagePath(image.path);
       setChooseImageSource(false);
     });
@@ -112,8 +100,7 @@ const AddProduct = ({navigation, route}: any) => {
       .catch(error => {
         console.log('error', error);
       });
-    const url = await imageRef?.getDownloadURL().catch(error => {
-    });
+    const url = await imageRef?.getDownloadURL().catch(error => {});
     return url;
   };
 
@@ -162,10 +149,7 @@ const AddProduct = ({navigation, route}: any) => {
   };
 
   const updateProduct = async () => {
-    console.log('update funtion is called');
-
     let uploadImageUrl = await UpdateUploadImage();
-    console.log(uploadImageUrl, '--------- updateProduct --------');
     firebase
       .firestore()
       .collection('AllData')
@@ -182,15 +166,12 @@ const AddProduct = ({navigation, route}: any) => {
         imageUrl: uploadImageUrl ? uploadImageUrl : imageUrl,
       })
       .then(() => {
-        // dispatch(updateProductList({userDetail,detail}))
         navigation.navigate('ProductDetails', {otherParam: detail.id});
       })
       .catch(error => {
         console.log(error);
       });
   };
-
-  const data = useSelector((state: any) => state.products.productList);
 
   return (
     <SafeAreaView style={styles.mainView}>
@@ -407,26 +388,8 @@ const styles = StyleSheet.create({
     marginTop: hp(20),
     fontSize: fontSize(18),
   },
-  SUBMITTopac: {
-    height: hp(100),
-    width: wp(100),
-    borderRadius: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: colors.black,
-    alignSelf: 'flex-end',
-    marginRight: wp(30),
-  },
   relative: {
     position: 'relative',
-  },
-  submitTopac: {
-    height: hp(100),
-    width: wp(100),
-    borderRadius: 100,
-    backgroundColor: colors.black,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 });
 

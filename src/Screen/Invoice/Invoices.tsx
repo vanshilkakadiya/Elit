@@ -6,8 +6,8 @@ import {
   Image,
   Alert,
   TouchableOpacity,
-  ScrollView,
   FlatList,
+  ScrollView,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import strings from '../../Constants/data/Strings';
@@ -15,77 +15,84 @@ import Back from '../../Components/Back';
 import colors from '../../Constants/data/Colors';
 import {fontSize, hp, wp} from '../../Constants/helper/helper';
 import {ImagePath} from '../../../assets';
-import {Switch} from 'react-native-switch';
-import {ButtonGroup} from '@rneui/themed';
 import EventTopac from '../../Components/EventTopac';
 import {useSelector} from 'react-redux';
 import moment from 'moment';
+import {useIsFocused} from '@react-navigation/native';
 
 const Invoices = ({navigation}: any) => {
+  const isFocused = useIsFocused();
+  const [unpaid, setUnpaid] = useState(true);
+  const [overDueData, setOverDue] = useState();
+  const [viewedData, setViewed] = useState();
   const helpAlert = () => {
     Alert.alert(strings.HELP, strings.enterProductDetailHelp, [
       {text: 'OK', onPress: () => console.log('OK pressed')},
     ]);
   };
 
-  const [unpaid, setUnpaid] = useState(true);
-
   const allInvoice = useSelector((state: any) => state.invoice.invoiceList);
-  useEffect(()=>{
-    // console.log(allInvoice,"allInvoice in the useEffect");
-    allInvoice.filter((item:any)=>{
-      let overdue=[] 
-      let viewed=[] 
-      var paymentDate = moment(item.data.paymentDate);
-      let dueDays = paymentDate.diff(item.data.invoiceDate, 'days');
-      console.log(dueDays,"dueDays inside the filter");
 
-      
-    })
-  },[])
+  useEffect(() => {
+    let overdue: any = [];
+    let viewed: any = [];
+    allInvoice?.filter((item: any) => {
+      const startDate = moment(item.data.invoiceDate, 'D, MMMM, YYYY');
+      const endDate = moment(item.data.paymentDate, 'D, MMMM, YYYY');
+      const differenceInDays = endDate.diff(startDate, 'days');
+      differenceInDays < 0 ? overdue.push(item) : viewed.push(item);
+    });
+    setOverDue(overdue);
+    setViewed(viewed);
+  }, [isFocused]);
 
   const InvoiceData = ({data}: any) => {
-    var paymentDate = moment(data.data.paymentDate);
-    let dueDays = paymentDate.diff(data.data.invoiceDate, 'days');
+    const startDate = moment(data.data.paymentDate, 'D, MMMM, YYYY');
+    const endDate = moment(data.data.invoiceDate, 'D, MMMM, YYYY');
+    const differenceInDays: any = endDate.diff(startDate, 'days');
     return (
-      <View style={{flex: 1, flexDirection: 'row', marginVertical: hp(10)}}>
+      <View style={styles.fletListMainView}>
         <View style={styles.firstCharView}>
           <Text style={styles.firstCharTxt}>
             {data.data.customer.data.Name.charAt(0)}
           </Text>
         </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            flex: 1,
-          }}>
+        <View style={styles.descriptionView}>
           <View>
-            <Text style={{fontSize: fontSize(25), marginLeft: wp(15)}}>
+            <Text style={styles.userNameTxt}>
               {data?.data?.customer?.data?.Name}
             </Text>
-            <Text style={{fontSize: fontSize(20),fontWeight:'300', marginLeft: wp(15)}}>
+            <Text style={styles.invoiceNumberTxt}>
               {strings.hashinvoice} {data?.data?.invoiceNumber}
             </Text>
           </View>
           <View>
-            <Text style={{fontSize: fontSize(25), marginLeft: wp(15),alignSelf:'flex-end'}}>
+            <Text style={styles.totalAmountTxt}>
               {'\u20B9'}
               {data?.data?.totalAmount}
             </Text>
             {
-              <Text style={{color:dueDays<1?colors.red:colors.black,fontSize:fontSize(20)}}>
+              <Text
+                style={{
+                  color:
+                    differenceInDays == 0
+                      ? colors.green
+                      : differenceInDays > 0
+                      ? colors.red
+                      : colors.black,
+                  fontSize: fontSize(20),
+                }}>
                 Due{' '}
-                {dueDays == 1
-                  ? strings.tomorrow
-                  : dueDays == 0
-                  ? strings.today
-                  : dueDays == -1
+                {differenceInDays == 1
                   ? strings.yesterday
-                  : dueDays > 1
-                  ? `${dueDays}after`
-                  : dueDays < -1
-                  ? `${dueDays} ago`
+                  : differenceInDays == 0
+                  ? strings.today
+                  : differenceInDays == -1
+                  ? strings.tomorrow
+                  : differenceInDays < 1
+                  ? `${Math.abs(differenceInDays)} after`
+                  : differenceInDays > -1
+                  ? `${Math.abs(differenceInDays)} days ago`
                   : null}
               </Text>
             }
@@ -143,24 +150,32 @@ const Invoices = ({navigation}: any) => {
             <Text>{strings.Paid}</Text>
           </TouchableOpacity>
         </View>
-        {/* <Text
-          style={{
-            marginVertical: hp(25),
-            color: colors.infoSuggestText,
-            fontSize: fontSize(20),
-          }}>
-          {strings.OVERDUE}
-        </Text> */}
 
-        {unpaid&&
-          <FlatList
-          data={allInvoice}
-          showsVerticalScrollIndicator={false}
-          // @ts-ignore
-          renderItem={({item}) => <InvoiceData data={item} />}
-        />}
+        {unpaid && (
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <View>
+              <Text style={styles.typeOfFlatListTxt}>{strings.OVERDUE}</Text>
+              <FlatList
+                data={overDueData}
+                showsVerticalScrollIndicator={false}
+                // @ts-ignore
+                renderItem={({item}) => <InvoiceData data={item} />}
+              />
+            </View>
+
+            <View>
+              <Text style={styles.typeOfFlatListTxt}>{strings.VIEWED}</Text>
+              <FlatList
+                data={viewedData}
+                showsVerticalScrollIndicator={false}
+                style={{paddingBottom: hp(200)}}
+                // @ts-ignore
+                renderItem={({item}) => <InvoiceData data={item} />}
+              />
+            </View>
+          </ScrollView>
+        )}
       </View>
-
       <EventTopac
         bottom={25}
         isImage={true}
@@ -189,15 +204,10 @@ const styles = StyleSheet.create({
   },
   contain: {
     marginHorizontal: wp(20),
-    // position:'relative',
   },
   verticleSpaceIncoicesTxt: {
     marginTop: hp(50),
     marginBottom: hp(30),
-  },
-  submitTxt: {
-    color: colors.white,
-    fontSize: fontSize(100),
   },
   flexDirectionRow: {
     flexDirection: 'row',
@@ -233,11 +243,6 @@ const styles = StyleSheet.create({
     height: hp(50),
     borderRadius: hp(15),
   },
-  topacView: {
-    position: 'absolute',
-    alignSelf: 'flex-end',
-    zIndex: 1,
-  },
   plusLogo: {
     height: hp(50),
     width: wp(50),
@@ -260,6 +265,35 @@ const styles = StyleSheet.create({
     tintColor: 'white',
     height: hp(50),
     width: wp(50),
+  },
+  descriptionView: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    flex: 1,
+  },
+  fletListMainView: {
+    flex: 1,
+    flexDirection: 'row',
+    marginVertical: hp(10),
+  },
+  userNameTxt: {
+    fontSize: fontSize(25),
+    marginLeft: wp(15),
+  },
+  invoiceNumberTxt: {
+    fontSize: fontSize(20),
+    fontWeight: '300',
+    marginLeft: wp(15),
+  },
+  totalAmountTxt: {
+    fontSize: fontSize(25),
+    marginLeft: wp(15),
+    alignSelf: 'flex-end',
+  },
+  typeOfFlatListTxt: {
+    marginVertical: hp(25),
+    color: colors.infoSuggestText,
+    fontSize: fontSize(20),
   },
 });
 

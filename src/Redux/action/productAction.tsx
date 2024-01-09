@@ -7,7 +7,4 @@ export const addProductList = (request: any) => ({
   payload: request,
 });
 
-// export const updateProductList = ({userDetail,detail}: any) => ({
-//   type: UPDATE_PRODUCT,
-//   payload: {userDetail,detail},
-// });
+

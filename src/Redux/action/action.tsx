@@ -7,12 +7,3 @@ export const addCustomerList = (request: any) => ({
   payload: request,
 });
 
-// export const deleteCustomerList = (request: any) => ({
-//   type: DELETE_CUSTOMERLIST,
-//   payload: request,
-// });
-
-// export const updateCustomerList = ({userDetail, id}: any) => ({
-//   type: UPDATE_CUSTOMERLIST,
-//   payload: {userDetail,id},
-// });
